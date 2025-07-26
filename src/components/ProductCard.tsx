@@ -1,276 +1,94 @@
-// src/components/ProductCard/ProductCard.tsx
-import React from 'react'
-import {
-    Card, CardMedia, CardContent, CardActions,
-    Typography, Button, Box,
-} from '@mui/material'
-import { styled } from '@mui/material/styles'
-import { addToCart } from '../features/cart/cartSlice'
-import { useAppDispatch } from '../../hooks/redux'
-
-// Типы предложения, соответствуют вашему бэкенду
-interface Offer {
-    id: number
-    title: string
-    description: string
-    price: number
-    imageUrl?: string
-}
+// 📁 src/components/ProductCard.tsx
+import React from 'react';
+import { Card, CardContent, CardMedia, Typography, Button, Chip, Box } from '@mui/material';
+import { ShoppingCart, Store, Inventory } from '@mui/icons-material';
+import { Offer } from '../types/offer';
 
 interface ProductCardProps {
-    offer: Offer
+    offer: Offer;
+    onAddToCart: (offer: Offer) => void; // 🛒 Функция добавления в корзину
 }
 
-// Тени из customShadows
-const StyledCard = styled(Card)(({ theme }) => ({
-    maxWidth: 345,
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-    boxShadow: `
-    0px 2px 4px rgba(0, 0, 0, 0.1),
-    0px 8px 16px rgba(0, 0, 0, 0.1)
-  `,
-    '&:hover': {
-        transform: 'translateY(-8px)',
-        boxShadow: `
-      0px 4px 8px rgba(0, 0, 0, 0.12),
-      0px 16px 24px rgba(0, 0, 0, 0.16)
-    `,
-    },
-}))
-
-const StyledCardMedia = styled(CardMedia)({
-    height: 200,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-})
-
-const StyledCardContent = styled(CardContent)({
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'column',
-})
-
-const ProductCard: React.FC<ProductCardProps> = ({ offer }) => {
-    const dispatch = useAppDispatch()
-    const handleAddToCart = () => {
-        dispatch(addToCart({
-            id: offer.id,
-            title: offer.title,
-            price: offer.price,
-            imageUrl: offer.imageUrl,
-            quantity: 1,
-        }))
-    }
+export const ProductCard: React.FC<ProductCardProps> = ({ offer, onAddToCart }) => {
     return (
-        <StyledCard>
-            <StyledCardMedia
-                image={offer.imageUrl || '/placeholder-image.jpg'}
-                title={offer.title}
+        <Card
+            sx={{
+                maxWidth: 345,
+                // 🌟 КРАСИВЫЕ ТЕНИ - оставляем как есть!
+                boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                '&:hover': {
+                    boxShadow: '0 16px 48px rgba(0,0,0,0.18)',
+                    transform: 'translateY(-4px)', // ✨ Подъем при наведении
+                },
+                transition: 'all 0.3s ease-in-out',
+                borderRadius: 2,
+            }}
+        >
+            {/* 🖼️ Картинка товара */}
+            <CardMedia
+                component="img"
+                height="200"
+                image={offer.imageUrl || '/placeholder-product.jpg'}
+                alt={offer.title}
             />
-            <StyledCardContent>
-                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+
+            <CardContent>
+                {/* 🏷️ Категория */}
+                <Box sx={{ mb: 1 }}>
+                    <Chip
+                        label={offer.category}
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                    />
+                </Box>
+
+                {/* 📝 Название */}
+                <Typography gutterBottom variant="h6" component="div">
                     {offer.title}
                 </Typography>
-                <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{
-                        flexGrow: 1,
-                        marginBottom: 2,
-                        display: '-webkit-box',
-                        WebkitLineClamp: 3,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden',
-                    }}
-                >
+
+                {/* 📄 Описание */}
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                     {offer.description}
                 </Typography>
-                <Box sx={{ marginTop: 'auto' }}>
-                    <Typography variant="h6" color="primary" sx={{ fontWeight: 700 }}>
-                        ₪{offer.price}
+
+                {/* 🚜 Ферма */}
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <Store fontSize="small" sx={{ mr: 1, color: 'success.main' }} />
+                    <Typography variant="body2" color="text.secondary">
+                        {offer.farm.name} • {offer.farm.location}
                     </Typography>
                 </Box>
-            </StyledCardContent>
-            <CardActions sx={{ padding: 2, paddingTop: 0 }}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    onClick={handleAddToCart}
-                    sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}
-                >
-                    Добавить в корзину
-                </Button>
-            </CardActions>
-        </StyledCard>
-    )
-}
-export default ProductCard
 
-// import React from 'react'
-// import {
-//     Card,
-//     CardMedia,
-//     CardContent,
-//     CardActions,
-//     Typography,
-//     Button,
-//     Box,
-// } from '@mui/material'
-// import { styled } from '@mui/material/styles'
-// import { useAppDispatch } from '../../hooks/redux'
-// import { addToCart } from '../features/cart/cartSlice'
-//
-// // Типы для товара (соответствуют вашему бэкенду)
-// interface Offer {
-//     id: number
-//     title: string
-//     description: string
-//     price: number
-//     imageUrl?: string
-//     userId: number
-// }
-//
-// interface ProductCardProps {
-//     offer: Offer
-// }
-//
-// // Стилизованная карточка с красивыми тенями
-// const StyledCard = styled(Card)(({ theme }) => ({
-//     maxWidth: 345,
-//     height: '100%',
-//     display: 'flex',
-//     flexDirection: 'column',
-//     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-//
-//     // Базовая тень (из первого проекта, но улучшенная)
-//     boxShadow: `
-//     0px 2px 4px rgba(0, 0, 0, 0.1),
-//     0px 8px 16px rgba(0, 0, 0, 0.1)
-//   `,
-//
-//     // Эффект при наведении
-//     '&:hover': {
-//         transform: 'translateY(-8px)',
-//         boxShadow: `
-//       0px 4px 8px rgba(0, 0, 0, 0.12),
-//       0px 16px 24px rgba(0, 0, 0, 0.16)
-//     `,
-//     },
-//
-//     // Адаптивность
-//     [theme.breakpoints.down('sm')]: {
-//         maxWidth: '100%',
-//     },
-// }))
-//
-// // Стилизованная область для изображения
-// const StyledCardMedia = styled(CardMedia)({
-//     height: 200,
-//     backgroundSize: 'cover',
-//     backgroundPosition: 'center',
-// })
-//
-// // Стилизованная область контента
-// const StyledCardContent = styled(CardContent)({
-//     flexGrow: 1,
-//     display: 'flex',
-//     flexDirection: 'column',
-// })
-//
-// const ProductCard: React.FC<ProductCardProps> = ({ offer }) => {
-//     const dispatch = useAppDispatch()
-//
-//     // Функция добавления в корзину
-//     const handleAddToCart = () => {
-//         dispatch(addToCart({
-//             id: offer.id,
-//             title: offer.title,
-//             price: offer.price,
-//             imageUrl: offer.imageUrl,
-//             quantity: 1,
-//         }))
-//     }
-//
-//     return (
-//         <StyledCard>
-//             {/* Изображение товара */}
-//             <StyledCardMedia
-//                 image={offer.imageUrl || '/placeholder-image.jpg'}
-//                 title={offer.title}
-//             />
-//
-//             {/* Контент карточки */}
-//             <StyledCardContent>
-//                 {/* Название товара */}
-//                 <Typography
-//                     gutterBottom
-//                     variant="h6"
-//                     component="h2"
-//                     sx={{
-//                         fontWeight: 600,
-//                         fontSize: '1.1rem',
-//                         lineHeight: 1.3,
-//                         marginBottom: 1,
-//                     }}
-//                 >
-//                     {offer.title}
-//                 </Typography>
-//
-//                 {/* Описание товара */}
-//                 <Typography
-//                     variant="body2"
-//                     color="text.secondary"
-//                     sx={{
-//                         flexGrow: 1,
-//                         marginBottom: 2,
-//                         display: '-webkit-box',
-//                         WebkitLineClamp: 3,
-//                         WebkitBoxOrient: 'vertical',
-//                         overflow: 'hidden',
-//                     }}
-//                 >
-//                     {offer.description}
-//                 </Typography>
-//
-//                 {/* Цена */}
-//                 <Box sx={{ marginTop: 'auto' }}>
-//                     <Typography
-//                         variant="h6"
-//                         component="span"
-//                         sx={{
-//                             fontWeight: 700,
-//                             color: 'primary.main',
-//                             fontSize: '1.3rem',
-//                         }}
-//                     >
-//                         ₪{offer.price}
-//                     </Typography>
-//                 </Box>
-//             </StyledCardContent>
-//
-//             {/* Действия (кнопки) */}
-//             <CardActions sx={{ padding: 2, paddingTop: 0 }}>
-//                 <Button
-//                     variant="contained"
-//                     color="primary"
-//                     fullWidth
-//                     onClick={handleAddToCart}
-//                     sx={{
-//                         textTransform: 'none',
-//                         fontWeight: 600,
-//                         borderRadius: 2,
-//                         padding: '10px 0',
-//                     }}
-//                 >
-//                     Добавить в корзину
-//                 </Button>
-//             </CardActions>
-//         </StyledCard>
-//     )
-// }
-//
-// export default ProductCard
+                {/* 📦 Количество в наличии */}
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Inventory fontSize="small" sx={{ mr: 1, color: 'warning.main' }} />
+                    <Typography variant="body2" color="text.secondary">
+                        В наличии: {offer.amount} шт.
+                    </Typography>
+                </Box>
+
+                {/* 💰 Цена и кнопка */}
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant="h5" color="primary" fontWeight="bold">
+                        ₪{offer.price}
+                    </Typography>
+
+                    <Button
+                        variant="contained"
+                        startIcon={<ShoppingCart />}
+                        onClick={() => onAddToCart(offer)}
+                        disabled={offer.amount === 0} // 🚫 Блокируем если нет в наличии
+                        sx={{
+                            borderRadius: 2,
+                            textTransform: 'none',
+                        }}
+                    >
+                        В корзину
+                    </Button>
+                </Box>
+            </CardContent>
+        </Card>
+    );
+};
