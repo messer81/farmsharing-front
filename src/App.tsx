@@ -1,16 +1,19 @@
+// 🌟 Главный компонент приложения
 import './App.css'
-import Header from "./components/Header.tsx";
-import {Routes, Route} from "react-router-dom";
-import MainPage from "./components/MainPage.tsx";
-import OffersPage from "./components/offers/OffersPage.tsx";
+import { Routes, Route } from "react-router-dom";
+import { Header } from "./widgets/header/ui/Header";
+import HomePage from "./pages/HomePage";
+import ProductsPage from "./pages/ProductsPage";
+import FarmPage from "./pages/FarmPage";
 
 function App() {
     return (
         <>
-            <Header/>
+            <Header />
             <Routes>
-                <Route path={'/'} element={<MainPage/>}/>
-                <Route path={'/offers'} element={<OffersPage/>}/>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/mockProducts" element={<ProductsPage />} />
+                <Route path="/farm/:id" element={<FarmPage />} />
             </Routes>
         </>
     )

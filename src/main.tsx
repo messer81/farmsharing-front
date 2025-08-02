@@ -1,56 +1,21 @@
-import { StrictMode } from 'react'
+// 🚀 Точка входа в приложение - здесь всё начинается
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
-import {createTheme, ThemeProvider} from "@mui/material";
-import {BrowserRouter} from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
+import { StoreProvider } from './app/providers/StoreProvider';
+import { ThemeProvider } from './app/providers/ThemeProvider';
+import { I18nProvider } from './app/providers/I18nProvider';
 
-const theme = createTheme({
-    palette: {
-        primary: {
-            main: "#fefdfd"
-        },
-        secondary: {
-            main: "#4b9b4b"
-        }
-    },
-    components: {
-        MuiToggleButton: {
-            styleOverrides: {
-                root: {
-                    '&:focus': {
-                        outline: 'none'
-                    }
-                }
-            }
-        },
-        MuiIconButton: {
-            styleOverrides: {
-                root: {
-                    '&:focus': {
-                        outline: 'none'
-                    }
-                }
-            }
-        },
-        MuiButton: {
-            styleOverrides: {
-                root: {
-                    '&:focus': {
-                        outline: 'none'
-                    }
-                }
-            }
-        }
-    }
-})
-
-createRoot(document.getElementById('root') as HTMLElement).render(
-  <StrictMode>
-      <BrowserRouter>
-          <ThemeProvider theme={theme}>
-              <App/>
-          </ThemeProvider>
-      </BrowserRouter>
-  </StrictMode>,
+// 🎨 Создаём корневой элемент и подключаем провайдеры
+createRoot(document.getElementById('root')!).render(
+    <StoreProvider>
+        <ThemeProvider>
+            <I18nProvider>
+                <BrowserRouter>
+                    <App />
+                </BrowserRouter>
+            </I18nProvider>
+        </ThemeProvider>
+    </StoreProvider>,
 )
