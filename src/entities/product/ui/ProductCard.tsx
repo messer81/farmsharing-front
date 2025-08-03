@@ -1,157 +1,235 @@
-import React, { useState } from 'react';
-        import { Card, CardMedia, CardContent, Typography, Button, Box, IconButton } from '@mui/material';
-        import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
-        import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-        import FavoriteIcon from '@mui/icons-material/Favorite';
-        import GradeIcon from '@mui/icons-material/Grade';
-        import { useTranslation } from 'react-i18next';
-        import { useCart } from '../../../features/cart/model/useCart';
-        import type { Product } from '../../../types';
+// 🛍️ Карточка продукта с адаптивным дизайном
+import { Box, Typography, Button, Chip, IconButton, Card, CardContent, CardMedia } from '@mui/material';
+import { Add as AddIcon, Favorite as FavoriteIcon, FavoriteBorder as FavoriteBorderIcon } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
+import { useCart } from '../../../features/cart/model/useCart';
+import type { Product } from '../model/productSlice';
 
-        // 🌟 Улучшенная карточка товара с анимациями, оптимизирована для мобильных устройств
-        interface ProductCardProps {
-            product: Product;
-            onOpenDetails?: (product: Product) => void; // Функция для открытия детальной информации
+interface ProductCardProps {
+    product: Product;
+    onAddToCart?: (product: Product) => void;
+    onToggleFavorite?: (productId: number) => void;
+    isFavorite?: boolean;
+}
+
+export const ProductCard = ({ 
+    product, 
+    onAddToCart, 
+    onToggleFavorite, 
+    isFavorite = false 
+}: ProductCardProps) => {
+    const { t } = useTranslation();
+    const { addItem } = useCart();
+
+    const handleAddToCart = () => {
+        if (onAddToCart) {
+            onAddToCart(product);
+        } else {
+            addItem(product, 1);
         }
+    };
 
-        export const ProductCard = ({ product, onOpenDetails }: ProductCardProps) => {
-            const { t } = useTranslation();
-            const { addItem } = useCart();
-            const [isFavorite, setIsFavorite] = useState(false);
+    const handleToggleFavorite = () => {
+        onToggleFavorite?.(product.id);
+    };
 
-            // 🥰 Добавление в избранное
-            const toggleFavorite = (e: React.MouseEvent) => {
-                e.stopPropagation();
-                setIsFavorite(!isFavorite);
-            };
-
-            // 🛒 Добавление в корзину
-            const handleAddToCart = (e: React.MouseEvent) => {
-                e.stopPropagation();
-                addItem(product, 1);
-            };
-
-            // 🔍 Открытие детальной информации
-            const handleCardClick = () => {
-                onOpenDetails?.(product);
-            };
-
-            return (
-                <Card
-                    onClick={handleCardClick}
+    return (
+        <Card 
+            sx={{
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+                },
+            }}
+        >
+            {/* 🖼️ Изображение продукта */}
+            <Box sx={{ position: 'relative' }}>
+                <CardMedia
+                    component="img"
+                    height={{ xs: 200, sm: 220, md: 240 }}
+                    image={product.imageUrl}
+                    alt={product.title}
                     sx={{
-                        height: '100%',
+                        objectFit: 'cover',
+                        transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                        '&:hover': {
+                            transform: 'scale(1.05)',
+                        },
+                    }}
+                />
+                
+                {/* 🏷️ Бейджи */}
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: 2,
+                        left: 2,
                         display: 'flex',
                         flexDirection: 'column',
-                        transition: 'transform 0.3s, box-shadow 0.3s',
-                        borderRadius: 3,
-                        overflow: 'hidden',
-                        position: 'relative',
-                        '&:hover': {
-                            transform: 'translateY(-8px)',
-                            boxShadow: '0 12px 20px rgba(0,0,0,0.15)',
-                        }
+                        gap: 1,
                     }}
                 >
-                    {/* Значок органического продукта, если применимо */}
-                    {product.farm.isOrganic && (
-                        <Box
+                    {product.isOrganic && (
+                        <Chip
+                            label="🌱 Organic"
+                            size="small"
+                            color="success"
                             sx={{
-                                position: 'absolute',
-                                top: '8px',
-                                left: '8px',
-                                bgcolor: 'green.500',
-                                color: 'white',
-                                px: 2,
-                                py: 1,
-                                borderRadius: '16px',
-                                fontSize: '12px',
-                                fontWeight: 'bold'
+                                fontWeight: 600,
+                                fontSize: '0.75rem',
                             }}
-                        >
-                            {t('product.organic')}
-                        </Box>
+                        />
                     )}
+                    {product.originalPrice && product.originalPrice > product.price && (
+                        <Chip
+                            label={`-${Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%`}
+                            size="small"
+                            sx={{
+                                backgroundColor: 'error.main',
+                                color: 'white',
+                                fontWeight: 700,
+                                fontSize: '0.75rem',
+                            }}
+                        />
+                    )}
+                </Box>
 
-                    {/* Кнопка Избранное */}
-                    <IconButton
-                        onClick={toggleFavorite}
-                        sx={{
-                            position: 'absolute',
-                            top: 8,
-                            right: 8,
-                            bgcolor: 'rgba(255,255,255,0.7)',
-                            '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
-                            opacity: 0.7,
-                            '&:hover': { opacity: 1 }
+                {/* ❤️ Кнопка избранного */}
+                <IconButton
+                    onClick={handleToggleFavorite}
+                    sx={{
+                        position: 'absolute',
+                        top: 2,
+                        right: 2,
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        backdropFilter: 'blur(10px)',
+                        '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 1)',
+                            transform: 'scale(1.1)',
+                        },
+                    }}
+                >
+                    {isFavorite ? (
+                        <FavoriteIcon color="error" />
+                    ) : (
+                        <FavoriteBorderIcon />
+                    )}
+                </IconButton>
+            </Box>
+
+            {/* 📝 Контент карточки */}
+            <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                {/* 🏷️ Название и категория */}
+                <Box sx={{ mb: 2 }}>
+                    <Typography 
+                        variant="h6" 
+                        sx={{ 
+                            mb: 1,
+                            fontWeight: 600,
+                            lineHeight: 1.2,
                         }}
                     >
-                        {isFavorite ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
-                    </IconButton>
+                        {product.title}
+                    </Typography>
+                    <Typography 
+                        variant="body2" 
+                        color="text.secondary"
+                        sx={{ mb: 1 }}
+                    >
+                        {product.category}
+                    </Typography>
+                </Box>
 
-                    {/* Изображение продукта */}
-                    <CardMedia
-                        component="img"
-                        height={160}
-                        image={product.imageUrl || '/placeholder-product.jpg'}
-                        alt={product.title}
-                        sx={{ objectFit: 'cover' }}
-                    />
-
-                    {/* Информация о продукте */}
-                    <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                        <Typography variant="h6" component="h3" fontWeight="bold" gutterBottom>
-                            {product.title}
-                        </Typography>
-
-                        {/* Информация о ферме и рейтинг */}
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                            <Typography variant="body2" color="text.secondary">
-                                {t('product.by')} {product.farm.name}
-                            </Typography>
-                            <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}>
-                                <GradeIcon sx={{ color: '#f9ca09', fontSize: 16, mr: 0.5 }} />
-                                <Typography variant="body2" color="text.secondary">
-                                    {product.farm.rating}
-                                </Typography>
-                            </Box>
-                        </Box>
-
-                        {/* Распорка, чтобы цена была внизу */}
-                        <Box sx={{ flexGrow: 1 }} />
-
-                        {/* Цена и кнопка добавления в корзину */}
-                        <Box sx={{
-                            display: 'flex',
+                {/* 📍 Ферма */}
+                <Box sx={{ mb: 2 }}>
+                    <Typography 
+                        variant="body2" 
+                        color="text.secondary"
+                        sx={{ 
+                            display: 'flex', 
                             alignItems: 'center',
-                            justifyContent: 'space-between',
-                            mt: 2
-                        }}>
-                            <Box>
-                                <Typography variant="h5" component="div" fontWeight="bold" color="primary">
-                                    ₪{product.price.toFixed(2)}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    {t('product.per')} {product.units}
-                                </Typography>
-                            </Box>
+                            gap: 0.5,
+                        }}
+                    >
+                        🏡 {product.farmName}
+                    </Typography>
+                </Box>
 
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={handleAddToCart}
-                                startIcon={<ShoppingCartOutlinedIcon />}
-                                sx={{
-                                    borderRadius: 2,
-                                    fontWeight: 'bold',
-                                }}
-                            >
-                                {t('product.addToCart')}
-                            </Button>
+                {/* ⭐ Рейтинг */}
+                {product.rating && (
+                    <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            {[...Array(5)].map((_, index) => (
+                                <Typography
+                                    key={index}
+                                    component="span"
+                                    sx={{
+                                        color: index < Math.floor(product.rating!) ? 'warning.main' : 'grey.300',
+                                        fontSize: '1rem',
+                                    }}
+                                >
+                                    ★
+                                </Typography>
+                            ))}
                         </Box>
-                    </CardContent>
-                </Card>
-            );
-        };
+                        <Typography variant="body2" color="text.secondary">
+                            ({product.rating})
+                        </Typography>
+                    </Box>
+                )}
 
-        export default ProductCard;
+                {/* 💰 Цена */}
+                <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 1, 
+                    mb: 2,
+                    mt: 'auto',
+                }}>
+                    <Typography 
+                        variant="h6" 
+                        sx={{ 
+                            fontWeight: 700,
+                            color: 'primary.main',
+                        }}
+                    >
+                        ${product.price.toFixed(2)}
+                    </Typography>
+                    {product.originalPrice && product.originalPrice > product.price && (
+                        <Typography 
+                            variant="body2" 
+                            sx={{ 
+                                textDecoration: 'line-through',
+                                color: 'text.secondary',
+                            }}
+                        >
+                            ${product.originalPrice.toFixed(2)}
+                        </Typography>
+                    )}
+                    {product.unit && (
+                        <Typography variant="body2" color="text.secondary">
+                            /{product.unit}
+                        </Typography>
+                    )}
+                </Box>
+
+                {/* 🛒 Кнопка добавления в корзину */}
+                <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={handleAddToCart}
+                    fullWidth
+                    sx={{
+                        mt: 'auto',
+                    }}
+                >
+                    {t('product.addToCart')}
+                </Button>
+            </CardContent>
+        </Card>
+    );
+};

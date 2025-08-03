@@ -1,8 +1,6 @@
 // 🛒 Компонент для отображения товара в корзине
-import { Box, Typography, IconButton } from '@mui/material';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
+import { Box, Typography, IconButton, Avatar } from '@mui/material';
+import { Delete as DeleteIcon, Add as AddIcon, Remove as RemoveIcon } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import { updateQuantity, removeFromCart } from '../model/cartSlice.ts';
 import type { CartItem as CartItemType } from '../../../types';
@@ -42,24 +40,17 @@ export const CartItem = ({ item }: CartItemProps) => {
             }
         }}>
             {/* 🖼️ Изображение товара */}
-            <Box sx={{
-                width: 70,
-                height: 70,
-                borderRadius: 1,
-                overflow: 'hidden',
-                mr: 2,
-                flexShrink: 0,
-            }}>
-                <img
-                    src={product.imageUrl || '/placeholder-product.jpg'}
-                    alt={product.title}
-                    style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                    }}
-                />
-            </Box>
+            <Avatar
+                src={product.imageUrl || '/placeholder-product.jpg'}
+                alt={product.title}
+                variant="rounded"
+                sx={{
+                    width: 70,
+                    height: 70,
+                    mr: 2,
+                    flexShrink: 0,
+                }}
+            />
 
             {/* 📝 Информация о товаре */}
             <Box sx={{ flex: 1 }}>
@@ -68,7 +59,7 @@ export const CartItem = ({ item }: CartItemProps) => {
                     justifyContent: 'space-between',
                     alignItems: 'flex-start',
                 }}>
-                    <Typography variant="subtitle1" fontWeight="medium">
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
                         {product.title}
                     </Typography>
 
@@ -77,15 +68,18 @@ export const CartItem = ({ item }: CartItemProps) => {
                         onClick={handleRemoveItem}
                         sx={{
                             color: 'text.secondary',
-                            '&:hover': { color: 'error.main' },
+                            '&:hover': { 
+                                color: 'error.main',
+                                backgroundColor: 'error.light',
+                            },
                         }}
                     >
-                        <DeleteOutlineIcon fontSize="small" />
+                        <DeleteIcon fontSize="small" />
                     </IconButton>
                 </Box>
 
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                    {product.farm?.name}
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    {product.farmName}
                 </Typography>
 
                 <Box sx={{
@@ -95,25 +89,30 @@ export const CartItem = ({ item }: CartItemProps) => {
                     mt: 1,
                 }}>
                     {/* 💰 Цена */}
-                    <Typography variant="subtitle1" fontWeight="bold" color="primary.main">
-                        ₪{product.price.toFixed(2)}
+                    <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                        ${product.price.toFixed(2)}
                     </Typography>
 
-                    {/* 🔢 Управление количеством */}
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    {/* 🔢 Счетчик количества */}
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                    }}>
                         <IconButton
                             size="small"
                             onClick={() => handleUpdateQuantity(quantity - 1)}
                             sx={{
-                                bgcolor: 'action.hover',
-                                p: '4px',
-                                '&:hover': { bgcolor: 'action.selected' },
+                                backgroundColor: 'grey.100',
+                                '&:hover': {
+                                    backgroundColor: 'grey.200',
+                                },
                             }}
                         >
                             <RemoveIcon fontSize="small" />
                         </IconButton>
 
-                        <Typography sx={{ mx: 1.5, minWidth: '20px', textAlign: 'center' }}>
+                        <Typography variant="body1" sx={{ minWidth: 30, textAlign: 'center' }}>
                             {quantity}
                         </Typography>
 
@@ -121,15 +120,21 @@ export const CartItem = ({ item }: CartItemProps) => {
                             size="small"
                             onClick={() => handleUpdateQuantity(quantity + 1)}
                             sx={{
-                                bgcolor: 'action.hover',
-                                p: '4px',
-                                '&:hover': { bgcolor: 'action.selected' },
+                                backgroundColor: 'grey.100',
+                                '&:hover': {
+                                    backgroundColor: 'grey.200',
+                                },
                             }}
                         >
                             <AddIcon fontSize="small" />
                         </IconButton>
                     </Box>
                 </Box>
+
+                {/* 💰 Общая стоимость товара */}
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                    Total: ${(product.price * quantity).toFixed(2)}
+                </Typography>
             </Box>
         </Box>
     );

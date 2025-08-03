@@ -3,7 +3,6 @@ module.exports = {
     content: [
         "./index.html",
         "./src/**/*.{js,ts,jsx,tsx}",
-        "./node_modules/tw-elements/js/**/*.js",
     ],
     theme: {
         extend: {
@@ -36,10 +35,5 @@ module.exports = {
             preflight: false,
         },
         important: true,
-        plugins: [
-            require("tw-elements/plugin.cjs"),
-            require('@tailwindcss/forms'),
-            require('@tailwindcss/typography')
-        ],
     },
 }

@@ -2,15 +2,21 @@
 export default {
     header: {
         search: 'Search',
+        searchPlaceholder: 'Search products, farms...',
+        toggleTheme: 'Toggle theme',
         login: 'Login',
         cart: 'Cart',
         sell: 'Start selling',
+        home: 'Home',
+        profile: 'Profile',
+        admin: 'Admin Panel',
     },
     main: {
         title: 'From Farm to Table',
         subtitle: 'Fresh, local produce delivered to your doorstep',
         buyButton: 'Buy fresh mockProducts',
         sellButton: 'Start selling',
+        mobileTip: 'Swipe to explore more products',
     },
     products: {
         title: 'Fresh Products',
@@ -19,6 +25,11 @@ export default {
         vegetables: 'Vegetables',
         diary: 'Diary',
         pantry: 'Pantry',
+        found: 'Found {{count}} products',
+        noProducts: 'No products found',
+        noProductsDescription: 'Try adjusting your search criteria or browse our categories',
+        sortBy: 'Sort by',
+        mobileTip: 'Tap to view product details',
     },
     product: {
         by: 'by',

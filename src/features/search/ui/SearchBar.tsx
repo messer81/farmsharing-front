@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { InputBase, IconButton, Paper, Box } from '@mui/material';
+import { InputBase, IconButton, Paper } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import { useTranslation } from 'react-i18next';

@@ -1,11 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit';
-// Импортируйте редьюсеры по необходимости
-// import cartReducer from '../features/cart/cartSlice';
+import { cartSlice } from '../../features/cart/model/cartSlice';
+import { productSlice } from '../../entities/product/model/productSlice';
+import { farmSlice } from '../../entities/farm/model/farmSlice';
+import { searchSlice } from '../../features/search/model/searchSlice';
+import { headerSlice } from '../../widgets/header/model/headerSlice';
 
 export const store = configureStore({
   reducer: {
-    // cart: cartReducer,
-    // другие редьюсеры...
+    cart: cartSlice.reducer,
+    product: productSlice.reducer,
+    farm: farmSlice.reducer,
+    search: searchSlice.reducer,
+    header: headerSlice.reducer,
   },
 });
 

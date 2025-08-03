@@ -1,4 +1,4 @@
-// 🏠 Главная страница с героическим баннером
+// 🏠 Адаптивная главная страница
 import { Box, Typography, Container, Grid, Paper } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { HeroSection } from '../widgets/hero/ui/HeroSection';
@@ -12,120 +12,173 @@ export const HomePage = () => {
             <HeroSection />
 
             {/* 🌿 Преимущества */}
-            <Container maxWidth="lg" sx={{ py: 8 }}>
+            <Container maxWidth={false} sx={{ py: { xs: 'var(--space-16)', sm: 'var(--space-24)', md: 'var(--space-32)' }, width: '100%' }}>
                 <Typography
                     variant="h3"
                     textAlign="center"
-                    fontWeight="bold"
                     sx={{
-                        mb: 6,
-                        background: 'linear-gradient(45deg, #4b9b4b, #7dcb7d)',
+                        mb: { xs: 'var(--space-16)', sm: 'var(--space-24)', md: 'var(--space-32)' },
+                        fontWeight: 'var(--font-weight-bold)',
+                        fontSize: { xs: 'var(--font-size-2xl)', sm: 'var(--font-size-3xl)', md: 'var(--font-size-4xl)' },
+                        background: 'var(--gradient-primary)',
                         backgroundClip: 'text',
                         WebkitBackgroundClip: 'text',
                         WebkitTextFillColor: 'transparent',
+                        lineHeight: 'var(--line-height-tight)',
                     }}
                 >
                     {t('home.whyUs')}
                 </Typography>
 
-                <Grid container spacing={4}>
+                <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
                     {/* 🥦 Блок "Свежие продукты" */}
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} sm={6} md={4}>
                         <Paper
                             elevation={0}
                             sx={{
-                                p: 4,
+                                p: { xs: 'var(--space-16)', sm: 'var(--space-20)', md: 'var(--space-24)' },
                                 height: '100%',
-                                borderRadius: 3,
+                                borderRadius: 'var(--radius-lg)',
                                 textAlign: 'center',
-                                boxShadow: '0 5px 15px rgba(0,0,0,0.08)',
-                                transition: 'transform 0.3s',
+                                boxShadow: 'var(--shadow-sm)',
+                                transition: 'all var(--duration-normal) var(--ease-standard)',
+                                background: 'var(--gradient-card)',
+                                border: '1px solid var(--color-card-border)',
                                 '&:hover': {
                                     transform: 'translateY(-8px)',
+                                    boxShadow: 'var(--shadow-card-hover)',
                                 }
                             }}
                         >
                             <Box
                                 sx={{
-                                    fontSize: '3rem',
-                                    mb: 2,
-                                    color: 'primary.main',
+                                    fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+                                    mb: { xs: 'var(--space-12)', sm: 'var(--space-16)' },
+                                    color: 'var(--color-primary)',
                                 }}
                             >
                                 🥦
                             </Box>
-                            <Typography variant="h5" fontWeight="bold" gutterBottom>
+                            <Typography 
+                                variant="h5" 
+                                sx={{
+                                    fontWeight: 'var(--font-weight-semibold)',
+                                    mb: 'var(--space-8)',
+                                    color: 'var(--color-text)',
+                                    fontSize: { xs: 'var(--font-size-lg)', sm: 'var(--font-size-xl)' },
+                                }}
+                            >
                                 {t('home.freshProducts')}
                             </Typography>
-                            <Typography color="text.secondary">
+                            <Typography 
+                                sx={{
+                                    color: 'var(--color-text-secondary)',
+                                    lineHeight: 'var(--line-height-normal)',
+                                    fontSize: { xs: 'var(--font-size-sm)', sm: 'var(--font-size-base)' },
+                                }}
+                            >
                                 {t('home.freshProductsText')}
                             </Typography>
                         </Paper>
                     </Grid>
 
                     {/* 👨‍🌾 Блок "Прямая связь с фермерами" */}
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} sm={6} md={4}>
                         <Paper
                             elevation={0}
                             sx={{
-                                p: 4,
+                                p: { xs: 'var(--space-16)', sm: 'var(--space-20)', md: 'var(--space-24)' },
                                 height: '100%',
-                                borderRadius: 3,
+                                borderRadius: 'var(--radius-lg)',
                                 textAlign: 'center',
-                                boxShadow: '0 5px 15px rgba(0,0,0,0.08)',
-                                transition: 'transform 0.3s',
+                                boxShadow: 'var(--shadow-sm)',
+                                transition: 'all var(--duration-normal) var(--ease-standard)',
+                                background: 'var(--gradient-card)',
+                                border: '1px solid var(--color-card-border)',
                                 '&:hover': {
                                     transform: 'translateY(-8px)',
+                                    boxShadow: 'var(--shadow-card-hover)',
                                 }
                             }}
                         >
                             <Box
                                 sx={{
-                                    fontSize: '3rem',
-                                    mb: 2,
-                                    color: 'primary.main',
+                                    fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+                                    mb: { xs: 'var(--space-12)', sm: 'var(--space-16)' },
+                                    color: 'var(--color-primary)',
                                 }}
                             >
                                 👨‍🌾
                             </Box>
-                            <Typography variant="h5" fontWeight="bold" gutterBottom>
+                            <Typography 
+                                variant="h5" 
+                                sx={{
+                                    fontWeight: 'var(--font-weight-semibold)',
+                                    mb: 'var(--space-8)',
+                                    color: 'var(--color-text)',
+                                    fontSize: { xs: 'var(--font-size-lg)', sm: 'var(--font-size-xl)' },
+                                }}
+                            >
                                 {t('home.directConnection')}
                             </Typography>
-                            <Typography color="text.secondary">
+                            <Typography 
+                                sx={{
+                                    color: 'var(--color-text-secondary)',
+                                    lineHeight: 'var(--line-height-normal)',
+                                    fontSize: { xs: 'var(--font-size-sm)', sm: 'var(--font-size-base)' },
+                                }}
+                            >
                                 {t('home.directConnectionText')}
                             </Typography>
                         </Paper>
                     </Grid>
 
                     {/* 🚚 Блок "Локальная доставка" */}
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} sm={6} md={4}>
                         <Paper
                             elevation={0}
                             sx={{
-                                p: 4,
+                                p: { xs: 'var(--space-16)', sm: 'var(--space-20)', md: 'var(--space-24)' },
                                 height: '100%',
-                                borderRadius: 3,
+                                borderRadius: 'var(--radius-lg)',
                                 textAlign: 'center',
-                                boxShadow: '0 5px 15px rgba(0,0,0,0.08)',
-                                transition: 'transform 0.3s',
+                                boxShadow: 'var(--shadow-sm)',
+                                transition: 'all var(--duration-normal) var(--ease-standard)',
+                                background: 'var(--gradient-card)',
+                                border: '1px solid var(--color-card-border)',
                                 '&:hover': {
                                     transform: 'translateY(-8px)',
+                                    boxShadow: 'var(--shadow-card-hover)',
                                 }
                             }}
                         >
                             <Box
                                 sx={{
-                                    fontSize: '3rem',
-                                    mb: 2,
-                                    color: 'primary.main',
+                                    fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+                                    mb: { xs: 'var(--space-12)', sm: 'var(--space-16)' },
+                                    color: 'var(--color-primary)',
                                 }}
                             >
                                 🚚
                             </Box>
-                            <Typography variant="h5" fontWeight="bold" gutterBottom>
+                            <Typography 
+                                variant="h5" 
+                                sx={{
+                                    fontWeight: 'var(--font-weight-semibold)',
+                                    mb: 'var(--space-8)',
+                                    color: 'var(--color-text)',
+                                    fontSize: { xs: 'var(--font-size-lg)', sm: 'var(--font-size-xl)' },
+                                }}
+                            >
                                 {t('home.localDelivery')}
                             </Typography>
-                            <Typography color="text.secondary">
+                            <Typography 
+                                sx={{
+                                    color: 'var(--color-text-secondary)',
+                                    lineHeight: 'var(--line-height-normal)',
+                                    fontSize: { xs: 'var(--font-size-sm)', sm: 'var(--font-size-base)' },
+                                }}
+                            >
                                 {t('home.localDeliveryText')}
                             </Typography>
                         </Paper>
@@ -136,16 +189,36 @@ export const HomePage = () => {
             {/* 💬 Призыв к действию */}
             <Box
                 sx={{
-                    bgcolor: 'primary.main',
-                    py: 8,
-                    color: 'white',
+                    bgcolor: 'var(--color-primary)',
+                    py: { xs: 'var(--space-24)', sm: 'var(--space-32)', md: 'var(--space-40)' },
+                    color: 'var(--color-white)',
+                    mt: { xs: 'var(--space-24)', sm: 'var(--space-32)' },
                 }}
             >
-                <Container maxWidth="lg">
-                    <Typography variant="h4" textAlign="center" fontWeight="bold" gutterBottom>
+                <Container maxWidth={false} sx={{ width: '100%' }}>
+                    <Typography 
+                        variant="h4" 
+                        textAlign="center" 
+                        sx={{
+                            fontWeight: 'var(--font-weight-bold)',
+                            mb: 'var(--space-12)',
+                            fontSize: { xs: 'var(--font-size-xl)', sm: 'var(--font-size-2xl)', md: 'var(--font-size-3xl)' },
+                            lineHeight: 'var(--line-height-tight)',
+                        }}
+                    >
                         {t('home.readyToStart')}
                     </Typography>
-                    <Typography textAlign="center" sx={{ maxWidth: '700px', mx: 'auto', mb: 4 }}>
+                    <Typography 
+                        textAlign="center" 
+                        sx={{ 
+                            maxWidth: { xs: '100%', sm: '600px', md: '700px' }, 
+                            mx: 'auto', 
+                            mb: 'var(--space-16)',
+                            fontSize: { xs: 'var(--font-size-base)', sm: 'var(--font-size-lg)' },
+                            lineHeight: 'var(--line-height-normal)',
+                            opacity: 0.95,
+                        }}
+                    >
                         {t('home.readyToStartText')}
                     </Typography>
                 </Container>

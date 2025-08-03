@@ -1,0 +1,127 @@
+{
+  "info": {
+    "name": "FarmSharing Products API",
+    "description": "API для работы с продуктами FarmSharing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"]
+            },
+            "description": "Получить все продукты"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/products",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "products"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": 1,\n      \"title\": \"Fresh Organic Tomatoes\",\n      \"description\": \"Sweet and juicy tomatoes grown without pesticides.\",\n      \"price\": 3.99,\n      \"originalPrice\": 4.99,\n      \"imageUrl\": \"/src/assets/tomat.jpg\",\n      \"category\": \"Vegetables\",\n      \"farmName\": \"Green Valley Farm\",\n      \"rating\": 4.8,\n      \"isOrganic\": true,\n      \"unit\": \"kg\",\n      \"stock\": 50,\n      \"tags\": [\"organic\", \"fresh\", \"local\"],\n      \"createdAt\": \"2024-01-15T10:00:00Z\",\n      \"updatedAt\": \"2024-01-20T14:30:00Z\"\n    }\n  ],\n  \"total\": 10\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Paginated Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products?page=1&limit=8",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "8"
+                }
+              ]
+            },
+            "description": "Получить продукты с пагинацией"
+          }
+        },
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "1"]
+            },
+            "description": "Получить продукт по ID"
+          }
+        },
+        {
+          "name": "Search Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/search?q=tomato",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "tomato"
+                }
+              ]
+            },
+            "description": "Поиск продуктов"
+          }
+        },
+        {
+          "name": "Get Products by Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/category/Vegetables",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products", "category", "Vegetables"]
+            },
+            "description": "Получить продукты по категории"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ]
+} 

@@ -1,16 +1,22 @@
-// 🇮🇱 Переводы на иврит
+// 🇮🇱 Иврит переводы
 export default {
     header: {
         search: 'חיפוש',
-        login: 'התחברות',
-        cart: 'עגלה',
+        searchPlaceholder: 'חיפוש מוצרים, חוות...',
+        toggleTheme: 'החלף ערכת נושא',
+        login: 'התחבר',
+        cart: 'עגלת קניות',
         sell: 'התחל למכור',
+        home: 'בית',
+        profile: 'פרופיל',
+        admin: 'לוח בקרה',
     },
     main: {
         title: 'מהחווה לשולחן',
-        subtitle: 'תוצרת טרייה מהאזור שלך送到 your doorstep',
+        subtitle: 'מוצרים טריים מקומיים עם משלוח עד הבית',
         buyButton: 'קנה מוצרים טריים',
         sellButton: 'התחל למכור',
+        mobileTip: 'גלול כדי לחקור יותר מוצרים',
     },
     products: {
         title: 'מוצרים טריים',
@@ -18,20 +24,25 @@ export default {
         fruits: 'פירות',
         vegetables: 'ירקות',
         diary: 'מוצרי חלב',
-        pantry: 'מאפייה',
+        pantry: 'מזווה',
+        found: 'נמצאו {{count}} מוצרים',
+        noProducts: 'לא נמצאו מוצרים',
+        noProductsDescription: 'נסה לשנות את קריטריוני החיפוש או עיין בקטגוריות שלנו',
+        sortBy: 'מיין לפי',
+        mobileTip: 'הקש כדי לראות פרטי מוצר',
     },
     product: {
-        by: 'מאת',
+        by: 'על ידי',
         addToCart: 'הוסף לעגלה',
         removeFromCart: 'הסר מהעגלה',
         favorite: 'הוסף למועדפים',
         unfavorite: 'הסר מהמועדפים',
     },
     cart: {
-        title: 'העגלה שלך',
-        empty: 'העגלה שלך ריקה',
+        title: 'עגלת הקניות שלך',
+        empty: 'עגלת הקניות שלך ריקה',
         total: 'סה"כ',
-        checkout: 'לתשלום',
+        checkout: 'תשלום',
         close: 'סגור',
     },
 };

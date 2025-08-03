@@ -1,4 +1,4 @@
-import type { Farm } from '../types/';
+import type { Farm } from '../../types';
 
 export const mockFarms: Farm[] = [
     {
