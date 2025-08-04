@@ -3,6 +3,7 @@ import { Box, Typography, IconButton, Avatar } from '@mui/material';
 import { Delete as DeleteIcon, Add as AddIcon, Remove as RemoveIcon } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import { updateQuantity, removeFromCart } from '../model/cartSlice.ts';
+import { getImageUrl } from '../../../utils/imageUtils';
 import type { CartItem as CartItemType } from '../../../types';
 
 interface CartItemProps {
@@ -41,7 +42,7 @@ export const CartItem = ({ item }: CartItemProps) => {
         }}>
             {/* 🖼️ Изображение товара */}
             <Avatar
-                src={product.imageUrl || '/placeholder-product.jpg'}
+                src={getImageUrl(product.imageUrl) || '/placeholder-product.jpg'}
                 alt={product.title}
                 variant="rounded"
                 sx={{

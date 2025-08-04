@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useProducts, useCart, useMutation } from '../api/useApi';
+import { useProducts, useCart, useMutation } from '../shared/api/useApi';
 
 // 🎯 Демонстрационный компонент для работы с Axios API
 export const ApiDemo: React.FC = () => {

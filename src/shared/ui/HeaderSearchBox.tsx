@@ -1,7 +1,7 @@
 // 🔍 Кастомный компонент поисковой строки для хедера
 import { Box, InputBase, IconButton } from '@mui/material';
 import { Search as SearchIcon, Close as CloseIcon } from '@mui/icons-material';
-import { useState } from 'react';
+import { useState, useCallback, memo } from 'react';
 
 interface HeaderSearchBoxProps {
   searchQuery: string;
@@ -11,7 +11,7 @@ interface HeaderSearchBoxProps {
   placeholder?: string;
 }
 
-export const HeaderSearchBox = ({ 
+export const HeaderSearchBox = memo(({ 
   searchQuery, 
   onSearchChange, 
   onSearchClear, 
@@ -20,20 +20,24 @@ export const HeaderSearchBox = ({
 }: HeaderSearchBoxProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = useCallback(() => {
     setIsExpanded(true);
-  };
+  }, []);
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     if (!searchQuery) {
       setIsExpanded(false);
     }
-  };
+  }, [searchQuery]);
 
-  const handleSearchClear = () => {
+  const handleSearchClear = useCallback(() => {
     onSearchClear();
     setIsExpanded(false);
-  };
+  }, [onSearchClear]);
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onSearchChange(e.target.value);
+  }, [onSearchChange]);
 
   return (
     <Box
@@ -84,7 +88,7 @@ export const HeaderSearchBox = ({
         <InputBase
           placeholder={placeholder}
           value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
+          onChange={handleInputChange}
           autoFocus={isExpanded}
           sx={{
             ml: 2,
@@ -104,4 +108,4 @@ export const HeaderSearchBox = ({
       </Box>
     </Box>
   );
-}; 
+}); 

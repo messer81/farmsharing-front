@@ -6,16 +6,16 @@ const cors = require('cors');
 const mockProducts = [
   {
     id: 1,
-    title: "Fresh Organic Tomatoes",
-    description: "Sweet and juicy tomatoes grown without pesticides. Perfect for salads and cooking.",
-    price: 3.99,
-    originalPrice: 4.99,
+    title: "Свежие помидоры",
+    description: "Свежие органические помидоры с фермы",
+    price: 15.99,
+    originalPrice: 18.99,
     imageUrl: "/src/assets/tomat.jpg",
-    category: "Vegetables",
-    farmName: "Green Valley Farm",
+    category: "vegetables",
+    farmName: "Galil Farm",
     rating: 4.8,
     isOrganic: true,
-    unit: "kg",
+    unit: "кг",
     stock: 50,
     tags: ["organic", "fresh", "local"],
     createdAt: "2024-01-15T10:00:00Z",
@@ -23,15 +23,15 @@ const mockProducts = [
   },
   {
     id: 2,
-    title: "Crisp Cucumbers",
-    description: "Fresh cucumbers perfect for salads and pickling. Grown in our greenhouse.",
-    price: 2.49,
-    imageUrl: "/src/assets/cucumber.jpg",
-    category: "Vegetables",
-    farmName: "Sunny Fields",
+    title: "Сыр халуми",
+    description: "Традиционный кипрский сыр",
+    price: 35.00,
+    imageUrl: "/src/assets/chease.jpg",
+    category: "dairy",
+    farmName: "Galil Chees",
     rating: 4.6,
     isOrganic: false,
-    unit: "kg",
+    unit: "кг",
     stock: 75,
     tags: ["fresh", "local"],
     createdAt: "2024-01-16T08:00:00Z",
@@ -39,15 +39,16 @@ const mockProducts = [
   },
   {
     id: 3,
-    title: "Sweet Basil",
-    description: "Aromatic basil leaves perfect for Italian dishes and pesto.",
-    price: 1.99,
-    imageUrl: "/src/assets/basil.jpg",
-    category: "Herbs",
-    farmName: "Herb Garden Co.",
+    title: "Сладкие апельсины",
+    description: "Свежие апельсины с цитрусовой рощи",
+    price: 12.50,
+    originalPrice: 14.99,
+    imageUrl: "/src/assets/orange.jpg",
+    category: "fruits",
+    farmName: "Цитрусовая роща",
     rating: 4.9,
     isOrganic: true,
-    unit: "bunch",
+    unit: "кг",
     stock: 30,
     tags: ["organic", "herbs", "fresh"],
     createdAt: "2024-01-17T09:00:00Z",
@@ -55,15 +56,16 @@ const mockProducts = [
   },
   {
     id: 4,
-    title: "Fresh Mint",
-    description: "Refreshing mint leaves for tea and cocktails.",
-    price: 1.49,
-    imageUrl: "/src/assets/mint.jpg",
-    category: "Herbs",
-    farmName: "Herb Garden Co.",
+    title: "Свежий базилик",
+    description: "Ароматный базилик для итальянских блюд",
+    price: 8.99,
+    originalPrice: 10.59,
+    imageUrl: "/src/assets/basil.jpg",
+    category: "herbs",
+    farmName: "Травяная ферма",
     rating: 4.7,
     isOrganic: true,
-    unit: "bunch",
+    unit: "пучок",
     stock: 40,
     tags: ["organic", "herbs", "fresh"],
     createdAt: "2024-01-18T07:00:00Z",
@@ -71,16 +73,16 @@ const mockProducts = [
   },
   {
     id: 5,
-    title: "Ripe Avocados",
-    description: "Creamy avocados perfect for guacamole and toast.",
-    price: 4.99,
-    originalPrice: 5.99,
-    imageUrl: "/src/assets/avocado.jpg",
-    category: "Fruits",
-    farmName: "Tropical Paradise",
+    title: "Домашний йогурт",
+    description: "Натуральный домашний йогурт",
+    price: 18.50,
+    originalPrice: 21.76,
+    imageUrl: "/src/assets/yogurt.jpg",
+    category: "dairy",
+    farmName: "Молочная ферма",
     rating: 4.5,
-    isOrganic: false,
-    unit: "piece",
+    isOrganic: true,
+    unit: "литр",
     stock: 25,
     tags: ["fresh", "local"],
     createdAt: "2024-01-19T10:00:00Z",
@@ -88,15 +90,16 @@ const mockProducts = [
   },
   {
     id: 6,
-    title: "Fresh Cheese",
-    description: "Artisanal cheese made from local cow's milk.",
-    price: 8.99,
-    imageUrl: "/src/assets/chease.jpg",
-    category: "Dairy",
-    farmName: "Dairy Delights",
+    title: "Мед из эвкалипта",
+    description: "Натуральный мед из эвкалиптовых цветов",
+    price: 45.00,
+    originalPrice: 52.94,
+    imageUrl: "/src/assets/honey.jpg",
+    category: "honey",
+    farmName: "Пасека Шарон",
     rating: 4.8,
     isOrganic: true,
-    unit: "200g",
+    unit: "банка 500г",
     stock: 20,
     tags: ["organic", "artisanal", "local"],
     createdAt: "2024-01-20T06:00:00Z",
@@ -104,15 +107,16 @@ const mockProducts = [
   },
   {
     id: 7,
-    title: "Pure Honey",
-    description: "Natural honey from our own beehives. No additives.",
-    price: 12.99,
-    imageUrl: "/src/assets/honey.jpg",
-    category: "Pantry",
-    farmName: "Bee Happy Farm",
+    title: "Розы",
+    description: "Свежие розы разных цветов",
+    price: 25.00,
+    originalPrice: 29.41,
+    imageUrl: "/src/assets/rose.jpg",
+    category: "flowers",
+    farmName: "Цветочная ферма",
     rating: 4.9,
     isOrganic: true,
-    unit: "500g",
+    unit: "букет",
     stock: 15,
     tags: ["organic", "natural", "local"],
     createdAt: "2024-01-15T12:00:00Z",
@@ -120,15 +124,16 @@ const mockProducts = [
   },
   {
     id: 8,
-    title: "Fresh Yogurt",
-    description: "Creamy yogurt made from organic milk.",
-    price: 3.49,
-    imageUrl: "/src/assets/yogurt.jpg",
-    category: "Dairy",
-    farmName: "Dairy Delights",
+    title: "Огурцы",
+    description: "Свежие хрустящие огурцы",
+    price: 9.99,
+    originalPrice: 11.75,
+    imageUrl: "/src/assets/cucumber.jpg",
+    category: "vegetables",
+    farmName: "Овощная ферма",
     rating: 4.7,
     isOrganic: true,
-    unit: "400g",
+    unit: "кг",
     stock: 35,
     tags: ["organic", "fresh", "local"],
     createdAt: "2024-01-20T05:00:00Z",
@@ -136,31 +141,32 @@ const mockProducts = [
   },
   {
     id: 9,
-    title: "Juicy Oranges",
-    description: "Sweet oranges packed with vitamin C.",
-    price: 2.99,
-    imageUrl: "/src/assets/orange.jpg",
-    category: "Fruits",
-    farmName: "Citrus Grove",
+    title: "Авокадо",
+    description: "Спелые авокадо Хасс",
+    price: 22.50,
+    imageUrl: "/src/assets/avocado.jpg",
+    category: "fruits",
+    farmName: "Тропическая ферма",
     rating: 4.6,
-    isOrganic: false,
-    unit: "kg",
-    stock: 60,
+    isOrganic: true,
+    unit: "кг",
+    stock: 0,
     tags: ["fresh", "vitamin-c"],
     createdAt: "2024-01-18T08:00:00Z",
     updatedAt: "2024-01-20T09:45:00Z"
   },
   {
     id: 10,
-    title: "Fresh Roses",
-    description: "Beautiful roses perfect for bouquets and decoration.",
-    price: 15.99,
-    imageUrl: "/src/assets/rose.jpg",
-    category: "Flowers",
-    farmName: "Rose Garden",
+    title: "Мята",
+    description: "Свежая мята для чая",
+    price: 6.50,
+    originalPrice: 7.65,
+    imageUrl: "/src/assets/mint.jpg",
+    category: "herbs",
+    farmName: "Травяная ферма",
     rating: 4.8,
     isOrganic: true,
-    unit: "dozen",
+    unit: "пучок",
     stock: 10,
     tags: ["organic", "beautiful", "fresh"],
     createdAt: "2024-01-19T07:00:00Z",
@@ -174,6 +180,9 @@ const PORT = process.env.PORT || 3000;
 // 🔧 Middleware
 app.use(cors());
 app.use(express.json());
+
+// 📁 Статические файлы (изображения)
+app.use('/src/assets', express.static('src/assets'));
 
 // 📡 API Routes
 app.get('/api/products', (req, res) => {
@@ -236,6 +245,149 @@ app.get('/api/products/category/:category', (req, res) => {
   });
 });
 
+// 🏭 Farms API endpoints
+app.get('/api/farms', (req, res) => {
+  // Создаем уникальные фермы из продуктов
+  const farms = [...new Set(mockProducts.map(p => p.farmName))].map((farmName, index) => ({
+    id: index + 1,
+    name: farmName,
+    description: `Ферма ${farmName} - производитель свежих продуктов`,
+    location: `Регион ${index + 1}`,
+    rating: (4 + Math.random()).toFixed(1),
+    productsCount: mockProducts.filter(p => p.farmName === farmName).length
+  }));
+  
+  res.json({
+    data: farms,
+    total: farms.length
+  });
+});
+
+app.get('/api/farms/:id', (req, res) => {
+  const { id } = req.params;
+  const farms = [...new Set(mockProducts.map(p => p.farmName))].map((farmName, index) => ({
+    id: index + 1,
+    name: farmName,
+    description: `Ферма ${farmName} - производитель свежих продуктов`,
+    location: `Регион ${index + 1}`,
+    rating: (4 + Math.random()).toFixed(1),
+    productsCount: mockProducts.filter(p => p.farmName === farmName).length
+  }));
+  
+  const farm = farms.find(f => f.id === parseInt(id));
+  
+  if (!farm) {
+    return res.status(404).json({ error: 'Farm not found' });
+  }
+  
+  res.json(farm);
+});
+
+app.get('/api/farms/:id/products', (req, res) => {
+  const { id } = req.params;
+  const farms = [...new Set(mockProducts.map(p => p.farmName))].map((farmName, index) => ({
+    id: index + 1,
+    name: farmName
+  }));
+  
+  const farm = farms.find(f => f.id === parseInt(id));
+  
+  if (!farm) {
+    return res.status(404).json({ error: 'Farm not found' });
+  }
+  
+  const farmProducts = mockProducts.filter(p => p.farmName === farm.name);
+  
+  res.json({
+    data: farmProducts,
+    total: farmProducts.length
+  });
+});
+
+// 🛒 Cart API endpoints
+let mockCart = [];
+
+app.get('/api/cart', (req, res) => {
+  res.json({
+    data: mockCart,
+    total: mockCart.length,
+    totalPrice: mockCart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0)
+  });
+});
+
+app.post('/api/cart/add', (req, res) => {
+  const { productId, quantity = 1 } = req.body;
+  
+  const product = mockProducts.find(p => p.id === productId);
+  if (!product) {
+    return res.status(404).json({ error: 'Product not found' });
+  }
+  
+  const existingItem = mockCart.find(item => item.productId === productId);
+  
+  if (existingItem) {
+    existingItem.quantity += quantity;
+  } else {
+    mockCart.push({
+      id: Date.now(),
+      productId,
+      quantity,
+      product
+    });
+  }
+  
+  res.json({
+    data: mockCart,
+    total: mockCart.length,
+    totalPrice: mockCart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0)
+  });
+});
+
+app.put('/api/cart/:itemId', (req, res) => {
+  const { itemId } = req.params;
+  const { quantity } = req.body;
+  
+  const item = mockCart.find(item => item.id === parseInt(itemId));
+  if (!item) {
+    return res.status(404).json({ error: 'Cart item not found' });
+  }
+  
+  item.quantity = quantity;
+  
+  res.json({
+    data: mockCart,
+    total: mockCart.length,
+    totalPrice: mockCart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0)
+  });
+});
+
+app.delete('/api/cart/:itemId', (req, res) => {
+  const { itemId } = req.params;
+  
+  const itemIndex = mockCart.findIndex(item => item.id === parseInt(itemId));
+  if (itemIndex === -1) {
+    return res.status(404).json({ error: 'Cart item not found' });
+  }
+  
+  mockCart.splice(itemIndex, 1);
+  
+  res.json({
+    data: mockCart,
+    total: mockCart.length,
+    totalPrice: mockCart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0)
+  });
+});
+
+app.delete('/api/cart', (req, res) => {
+  mockCart = [];
+  
+  res.json({
+    data: [],
+    total: 0,
+    totalPrice: 0
+  });
+});
+
 // 🏠 Health check
 app.get('/', (req, res) => {
   res.json({ 
@@ -245,7 +397,15 @@ app.get('/', (req, res) => {
       'GET /api/products',
       'GET /api/products/:id',
       'GET /api/products/search?q=query',
-      'GET /api/products/category/:category'
+      'GET /api/products/category/:category',
+      'GET /api/farms',
+      'GET /api/farms/:id',
+      'GET /api/farms/:id/products',
+      'GET /api/cart',
+      'POST /api/cart/add',
+      'PUT /api/cart/:itemId',
+      'DELETE /api/cart/:itemId',
+      'DELETE /api/cart'
     ]
   });
 });

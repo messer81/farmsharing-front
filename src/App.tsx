@@ -8,6 +8,7 @@ import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
 import FarmPage from "./pages/FarmPage";
 import DesignSystemPage from "./pages/DesignSystemPage";
+import { ApiDemo } from "./components/ApiDemo";
 import { ThemeProvider } from "./app/providers/ThemeProvider";
 import theme from "./shared/styles/theme";
 
@@ -22,6 +23,7 @@ function App() {
                     <Route path="/mockProducts" element={<ProductsPage />} />
                     <Route path="/farm/:id" element={<FarmPage />} />
                     <Route path="/design-system" element={<DesignSystemPage />} />
+                    <Route path="/axios-demo" element={<ApiDemo />} />
                 </Routes>
             </ThemeProvider>
         </MuiThemeProvider>

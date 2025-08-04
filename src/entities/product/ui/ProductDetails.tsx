@@ -8,6 +8,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useTranslation } from 'react-i18next';
 import { useCart } from '../../../features/cart/model/useCart';
+import { getImageUrl } from '../../../utils/imageUtils';
 import type { Product } from '../../../types/index';
 
 interface ProductDetailsProps {
@@ -76,7 +77,7 @@ export const ProductDetails = ({ product, open, onClose }: ProductDetailsProps) 
                         }}
                     >
                         <img
-                            src={product.imageUrl || '/placeholder-product.jpg'}
+                            src={getImageUrl(product.imageUrl || '') || '/placeholder-product.jpg'}
                             alt={product.title}
                             style={{
                                 width: '100%',
@@ -101,7 +102,7 @@ export const ProductDetails = ({ product, open, onClose }: ProductDetailsProps) 
                         {/* Информация о ферме */}
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                             <Typography variant="body1">
-                                {t('product.by')} {product.farm.name} • {product.farm.city}
+                                {t('product.by')} {product.farmName}
                             </Typography>
                         </Box>
 
@@ -131,7 +132,7 @@ export const ProductDetails = ({ product, open, onClose }: ProductDetailsProps) 
                                             <strong>{t('product.category')}:</strong> {product.category}
                                         </Typography>
                                         <Typography variant="body1" gutterBottom>
-                                            <strong>{t('product.available')}:</strong> {product.amount} {product.units}
+                                            <strong>{t('product.available')}:</strong> {product.stock} {product.unit}
                                         </Typography>
                                     </Box>
                                 )}
@@ -151,7 +152,7 @@ export const ProductDetails = ({ product, open, onClose }: ProductDetailsProps) 
                             <Typography variant="h4" color="primary" fontWeight="bold">
                                 ₪{product.price.toFixed(2)}
                                 <Typography variant="body2" component="span" sx={{ ml: 1 }}>
-                                    {t('product.per')} {product.units}
+                                    {t('product.per')} {product.unit}
                                 </Typography>
                             </Typography>
 

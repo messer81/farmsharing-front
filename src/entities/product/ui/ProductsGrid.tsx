@@ -1,63 +1,78 @@
 // 🛍️ Сетка продуктов с фильтрацией и поиском
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
-  Box, 
   Grid, 
   Typography, 
-  TextField, 
-  FormControl, 
-  InputLabel, 
-  Select, 
-  MenuItem, 
+  Button, 
+  Box,
   Chip,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
   Pagination,
   CircularProgress,
-  Alert,
-  Button
+  Alert
 } from '@mui/material';
-import { Search as SearchIcon, FilterList as FilterIcon } from '@mui/icons-material';
+import { Search } from '@mui/icons-material';
+import { useProductsPaginated, useProductsSearch, useProductsByCategory } from '../../../shared/api/useApi';
 import { ProductCard } from './ProductCard';
-import { apiClient, type Product } from '../../../shared/api/api';
+import type { Product } from '../../../types/api';
 
 interface ProductsGridProps {
-  onProductClick?: (product: Product) => void;
+  products?: Product[];
 }
 
-export const ProductsGrid = ({ onProductClick }: ProductsGridProps) => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+export const ProductsGrid = ({ products: initialProducts }: ProductsGridProps) => {
+  const [products, setProducts] = useState<Product[]>(initialProducts || []);
+  const [loading, setLoading] = useState(!initialProducts);
   const [error, setError] = useState<string | null>(null);
-  
-  // Фильтрация и поиск
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  
-  // Пагинация
   const [page, setPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalProducts, setTotalProducts] = useState(0);
-  
-  // Получение данных
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const response = await apiClient.products.getPaginated(page, 8);
-      setProducts(response.data);
-      setTotalPages(response.totalPages);
-      setTotalProducts(response.total);
-    } catch (err) {
-      setError('Ошибка загрузки продуктов');
-      console.error('Error fetching products:', err);
-    } finally {
+
+  // Используем стабильные хуки
+  const { data, loading: apiLoading, error: apiError, execute: fetchProducts } = useProductsPaginated(page, 8);
+  const { execute: searchProducts } = useProductsSearch(searchQuery);
+  const { execute: filterByCategory } = useProductsByCategory(selectedCategory);
+
+  // Обновляем состояние при получении данных
+  useEffect(() => {
+    if (data?.data) {
+      setProducts(data.data);
+      setTotalPages(data.totalPages || 1);
+    }
+  }, [data]);
+
+  // Обновляем состояние загрузки и ошибок
+  useEffect(() => {
+    setLoading(apiLoading);
+  }, [apiLoading]);
+
+  useEffect(() => {
+    setError(apiError);
+  }, [apiError]);
+
+  // Загружаем продукты при изменении страницы (только если не переданы через пропсы)
+  useEffect(() => {
+    if (!initialProducts) {
+      fetchProducts();
+    }
+  }, [page, fetchProducts, initialProducts]);
+
+  // Обновляем продукты при изменении пропсов
+  useEffect(() => {
+    if (initialProducts) {
+      setProducts(initialProducts);
       setLoading(false);
     }
-  };
+  }, [initialProducts]);
 
-  // Поиск продуктов
-  const searchProducts = async () => {
+  // Мемоизируем обработчики
+  const handleSearch = useCallback(async () => {
     if (!searchQuery.trim()) {
       fetchProducts();
       return;
@@ -65,19 +80,15 @@ export const ProductsGrid = ({ onProductClick }: ProductsGridProps) => {
 
     try {
       setLoading(true);
-      const response = await apiClient.products.search(searchQuery);
-      setProducts(response.data);
-      setTotalPages(1);
-      setTotalProducts(response.total);
+      await searchProducts();
     } catch (err) {
       setError('Ошибка поиска');
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery, fetchProducts, searchProducts]);
 
-  // Фильтрация по категории
-  const filterByCategory = async (category: string) => {
+  const handleCategoryFilter = useCallback(async (category: string) => {
     if (category === 'all') {
       fetchProducts();
       return;
@@ -85,52 +96,45 @@ export const ProductsGrid = ({ onProductClick }: ProductsGridProps) => {
 
     try {
       setLoading(true);
-      const response = await apiClient.products.getByCategory(category);
-      setProducts(response.data);
-      setTotalPages(1);
-      setTotalProducts(response.total);
+      await filterByCategory();
     } catch (err) {
       setError('Ошибка фильтрации');
     } finally {
       setLoading(false);
     }
-  };
+  }, [fetchProducts, filterByCategory]);
 
-  // Эффекты
-  useEffect(() => {
-    fetchProducts();
-  }, [page]);
-
+  // Эффекты для поиска и фильтрации
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (searchQuery) {
-        searchProducts();
+        handleSearch();
       } else {
         fetchProducts();
       }
     }, 500);
 
     return () => clearTimeout(timeoutId);
-  }, [searchQuery]);
+  }, [searchQuery, handleSearch, fetchProducts]);
 
   useEffect(() => {
     if (selectedCategory !== 'all') {
-      filterByCategory(selectedCategory);
+      handleCategoryFilter(selectedCategory);
     } else {
       fetchProducts();
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, handleCategoryFilter, fetchProducts]);
 
   // Уникальные категории
-  const categories = ['all', 'Vegetables', 'Fruits', 'Herbs', 'Dairy', 'Pantry', 'Flowers'];
+  const categories = ['all', 'vegetables', 'fruits', 'herbs', 'dairy', 'honey', 'flowers'];
 
   // Уникальные теги
-  const allTags = Array.from(new Set(products.flatMap(p => p.tags)));
+  const allTags = Array.from(new Set(products.flatMap(p => p.tags || [])));
 
   // Фильтрация по тегам
   const filteredProducts = selectedTags.length > 0 
     ? products.filter(product => 
-        selectedTags.some(tag => product.tags.includes(tag))
+        selectedTags.some(tag => product.tags?.includes(tag))
       )
     : products;
 
@@ -148,7 +152,7 @@ export const ProductsGrid = ({ onProductClick }: ProductsGridProps) => {
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
-        <Button variant="contained" onClick={fetchProducts}>
+        <Button variant="contained" onClick={() => fetchProducts()}>
           Попробовать снова
         </Button>
       </Box>
@@ -173,7 +177,7 @@ export const ProductsGrid = ({ onProductClick }: ProductsGridProps) => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               InputProps={{
-                startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />,
+                startAdornment: <Search sx={{ mr: 1, color: 'text.secondary' }} />,
               }}
             />
           </Grid>
@@ -202,15 +206,15 @@ export const ProductsGrid = ({ onProductClick }: ProductsGridProps) => {
               <Typography variant="body2" sx={{ mr: 1, alignSelf: 'center' }}>
                 Tags:
               </Typography>
-              {allTags.map((tag) => (
+              {allTags.map((tag: string) => (
                 <Chip
                   key={tag}
                   label={tag}
                   size="small"
                   onClick={() => {
-                    setSelectedTags(prev => 
+                    setSelectedTags((prev: string[]) => 
                       prev.includes(tag) 
-                        ? prev.filter(t => t !== tag)
+                        ? prev.filter((t: string) => t !== tag)
                         : [...prev, tag]
                     );
                   }}

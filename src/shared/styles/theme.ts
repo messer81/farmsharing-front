@@ -191,12 +191,17 @@ export const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: 'rgba(245, 245, 245, 0.3)',
+          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+          transition: 'all 0.3s ease',
           zIndex: 1000,
+          '&:hover': {
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%)',
+            boxShadow: '0 6px 25px rgba(0, 0, 0, 0.15)',
+          },
         },
       },
     },
@@ -210,6 +215,12 @@ export const theme = createTheme({
             backgroundColor: 'rgba(34, 197, 94, 0.1)',
             transform: 'scale(1.05)',
             color: 'primary.main',
+          },
+        },
+        // Специальные стили для иконок в хедере
+        sizeMedium: {
+          '& .MuiSvgIcon-root': {
+            fontSize: '24px',
           },
         },
       },
@@ -277,6 +288,25 @@ export const theme = createTheme({
         root: {
           '& .MuiAlert-root': {
             borderRadius: '8px',
+          },
+        },
+      },
+    },
+    // Специальные стили для логотипа в хедере
+    MuiTypography: {
+      styleOverrides: {
+        h6: {
+          '&.header-logo': {
+            fontWeight: 700,
+            color: 'primary.main',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              color: 'primary.dark',
+              transform: 'scale(1.02)',
+            },
           },
         },
       },

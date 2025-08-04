@@ -1,13 +1,13 @@
 // 🛒 Хук для работы с корзиной через Redux и API
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import {
     addToCart, removeFromCart, updateQuantity, clearCart as clearCartAction,
     openCart, closeCart, toggleCart, setCartItems, setLoading, setError,
     selectCartItems, selectCartIsOpen, selectTotalItems, selectTotalPrice,
     selectCartLoading, selectCartError
 } from './cartSlice';
-import { useCart as useCartApi } from '../../../shared/api/useApi';
+import { useCart as useCartApi, clearCache } from '../../../shared/api/useApi';
 import type { Product } from '../../../types';
 
 export const useCart = () => {
@@ -21,14 +21,20 @@ export const useCart = () => {
     const loading = useSelector(selectCartLoading);
     const error = useSelector(selectCartError);
 
-    // Используем новый API хук для корзины
+    // Используем новый API хук для корзины с кэшированием
     const cartApi = useCartApi();
     const { data: apiCart, loading: apiLoading, error: apiError, execute: fetchCart } = cartApi.getCart();
+    
+    // Флаг для предотвращения множественных запросов
+    const hasInitialized = useRef(false);
 
-    // Загружаем корзину при монтировании компонента
+    // Загружаем корзину при монтировании компонента (только один раз)
     useEffect(() => {
-        fetchCart();
-    }, [fetchCart]);
+        if (!hasInitialized.current) {
+            hasInitialized.current = true;
+            fetchCart();
+        }
+    }, []); // Убираем fetchCart из зависимостей
 
     // Синхронизируем состояние API с Redux
     useEffect(() => {
@@ -62,6 +68,9 @@ export const useCart = () => {
             const addToCartApi = cartApi.addToCart(product.id, quantity);
             await addToCartApi.execute();
             
+            // Очищаем кэш корзины после изменения
+            clearCache('cart');
+            
             dispatch(setLoading(false));
         } catch (err) {
             dispatch(setError(err instanceof Error ? err.message : 'Failed to add item to cart'));
@@ -80,6 +89,9 @@ export const useCart = () => {
             // Синхронизируем с сервером
             const removeFromCartApi = cartApi.removeFromCart(productId);
             await removeFromCartApi.execute();
+            
+            // Очищаем кэш корзины после изменения
+            clearCache('cart');
             
             dispatch(setLoading(false));
         } catch (err) {
@@ -100,6 +112,9 @@ export const useCart = () => {
             const updateCartItemApi = cartApi.updateCartItem(productId, quantity);
             await updateCartItemApi.execute();
             
+            // Очищаем кэш корзины после изменения
+            clearCache('cart');
+            
             dispatch(setLoading(false));
         } catch (err) {
             dispatch(setError(err instanceof Error ? err.message : 'Failed to update item quantity'));
@@ -118,6 +133,9 @@ export const useCart = () => {
             // Синхронизируем с сервером
             const clearCartApi = cartApi.clearCart();
             await clearCartApi.execute();
+            
+            // Очищаем кэш корзины после изменения
+            clearCache('cart');
             
             dispatch(setLoading(false));
         } catch (err) {

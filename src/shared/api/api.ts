@@ -1,6 +1,6 @@
-// 🌐 API слой с Axios для тестирования с Postman
-import { productsAPI, type Product } from './mockProducts';
-import axiosInstance, { type ApiResponse, type PaginatedResponse, apiUtils } from './axios';
+// 🌐 API слой с Axios для работы с Express сервером
+import type { Product, ApiResponse, PaginatedResponse } from '../../types/api';
+import axiosInstance, { apiUtils } from './axios';
 
 // 🔧 Конфигурация API
 const API_CONFIG = {
@@ -36,11 +36,11 @@ async function apiRequest<T>(
   }
 }
 
-// 🛍️ API для продуктов с Axios
+// 🛍️ API для продуктов с Express сервером
 export const productsApi = {
   // Получить все продукты
-  getAll: async (): Promise<ApiResponse<Product[]>> => {
-    return apiRequest<ApiResponse<Product[]>>('/api/products');
+  getAll: async (): Promise<PaginatedResponse<Product>> => {
+    return apiRequest<PaginatedResponse<Product>>('/api/products');
   },
 
   // Получить продукты с пагинацией
@@ -51,20 +51,20 @@ export const productsApi = {
   },
 
   // Получить продукт по ID
-  getById: async (id: number): Promise<ApiResponse<Product>> => {
-    return apiRequest<ApiResponse<Product>>(`/api/products/${id}`);
+  getById: async (id: number): Promise<Product> => {
+    return apiRequest<Product>(`/api/products/${id}`);
   },
 
   // Поиск продуктов
-  search: async (query: string): Promise<ApiResponse<Product[]>> => {
-    return apiRequest<ApiResponse<Product[]>>('/api/products/search', {
+  search: async (query: string): Promise<{ data: Product[]; total: number }> => {
+    return apiRequest<{ data: Product[]; total: number }>('/api/products/search', {
       params: { q: query }
     });
   },
 
   // Фильтрация по категории
-  getByCategory: async (category: string): Promise<ApiResponse<Product[]>> => {
-    return apiRequest<ApiResponse<Product[]>>(`/api/products/category/${encodeURIComponent(category)}`);
+  getByCategory: async (category: string): Promise<{ data: Product[]; total: number }> => {
+    return apiRequest<{ data: Product[]; total: number }>(`/api/products/category/${encodeURIComponent(category)}`);
   },
 
   // Создать новый продукт
@@ -118,7 +118,7 @@ export const cartApi = {
 
   // Добавить товар в корзину
   addToCart: async (productId: number, quantity: number = 1): Promise<ApiResponse<any>> => {
-    return apiRequest<ApiResponse<any>>('/api/cart/items', {
+    return apiRequest<ApiResponse<any>>('/api/cart/add', {
       method: 'POST',
       data: { productId, quantity }
     });
@@ -126,7 +126,7 @@ export const cartApi = {
 
   // Обновить количество товара в корзине
   updateCartItem: async (itemId: number, quantity: number): Promise<ApiResponse<any>> => {
-    return apiRequest<ApiResponse<any>>(`/api/cart/items/${itemId}`, {
+    return apiRequest<ApiResponse<any>>(`/api/cart/${itemId}`, {
       method: 'PUT',
       data: { quantity }
     });
@@ -134,7 +134,7 @@ export const cartApi = {
 
   // Удалить товар из корзины
   removeFromCart: async (itemId: number): Promise<ApiResponse<void>> => {
-    return apiRequest<ApiResponse<void>>(`/api/cart/items/${itemId}`, {
+    return apiRequest<ApiResponse<void>>(`/api/cart/${itemId}`, {
       method: 'DELETE'
     });
   },
@@ -147,15 +147,11 @@ export const cartApi = {
   },
 };
 
-// 🔄 Функция для переключения между mock и реальным API
-export const useMockAPI = () => {
-  // По умолчанию используем mock для быстрого старта
-  return import.meta.env.VITE_USE_MOCK_API !== 'false';
-};
+
 
 // 🎯 Универсальный API клиент
 export const apiClient = {
-  products: useMockAPI() ? productsAPI : productsApi,
+  products: productsApi, // Всегда используем Axios API
   farms: farmsApi,
   cart: cartApi,
 };

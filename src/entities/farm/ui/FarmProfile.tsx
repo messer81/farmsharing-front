@@ -8,8 +8,8 @@
                      import VerifiedIcon from '@mui/icons-material/Verified';
                      import { useTranslation } from 'react-i18next';
                      import { ProductCard } from '../../product/ui/ProductCard';
-                     import type { Farm, Product } from '../../../types';
-                     import { mockProducts } from '../../../shared/api/mockProducts';
+import type { Farm } from '../../../types';
+import type { Product } from '../../../types/api';
 
                      interface FarmProfileProps {
                          farm: Farm;
@@ -21,10 +21,8 @@
                          const [farmProducts, setFarmProducts] = useState<Product[]>([]);
 
                          useEffect(() => {
-                             const productsOfCurrentFarm = mockProducts.filter(
-                                 (product) => product.farm.id === farm.id
-                             );
-                             setFarmProducts(productsOfCurrentFarm);
+                             // Временно используем пустой массив, так как mockProducts удален
+                             setFarmProducts([]);
                          }, [farm.id]);
 
                          return (

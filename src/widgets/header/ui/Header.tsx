@@ -1,49 +1,59 @@
-// 🎯 Современный хедер с поиском и навигацией
-import { AppBar, Toolbar, Box, useMediaQuery, IconButton, Typography, Collapse } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+// 🎯 Главный хедер приложения
+import { useState, useCallback } from 'react';
 import { 
-    Search as SearchIcon,
-    ShoppingCart as CartIcon,
-    Person as UserIcon,
-    Close as CloseIcon
-} from '@mui/icons-material';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+    AppBar, 
+    Toolbar, 
+    Typography, 
+    IconButton, 
+    Box, 
+    Collapse,
+    useTheme,
+    useMediaQuery
+} from '@mui/material';
+import { Search as SearchIcon, ShoppingCart as CartIcon, Person as UserIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { useCart } from '../../../features/cart/model/useCart';
+import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { HeaderSearchBox } from '../../../shared/ui/HeaderSearchBox';
 import { CartBadge } from '../../../shared/ui/CartBadge';
+import { useCart } from '../../../features/cart/model/useCart';
 
 export const Header = () => {
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const { t } = useTranslation();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const { totalItems } = useCart();
     
-    const [searchOpen, setSearchOpen] = useState(false);
+    // Состояние поиска
     const [searchQuery, setSearchQuery] = useState('');
+    const [searchOpen, setSearchOpen] = useState(false);
 
-    const handleSearchToggle = () => {
-        setSearchOpen(!searchOpen);
-        if (searchOpen) {
-            setSearchQuery('');
-        }
-    };
+    // Мемоизированные обработчики
+    const handleSearchToggle = useCallback(() => {
+        setSearchOpen(prev => !prev);
+    }, []);
 
-    const handleSearchSubmit = (e: React.FormEvent) => {
+    const handleSearchSubmit = useCallback((e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Search:', searchQuery);
-    };
+        // Логика поиска
+        console.log('Search submitted:', searchQuery);
+    }, [searchQuery]);
 
-    const handleSearchClear = () => {
+    const handleSearchClear = useCallback(() => {
         setSearchQuery('');
-    };
+    }, []);
+
+    const handleSearchChange = useCallback((value: string) => {
+        setSearchQuery(value);
+    }, []);
 
     return (
-        <AppBar position="sticky">
-            <Toolbar>
+        <AppBar 
+            position="sticky" 
+            elevation={0}
+        >
+            <Toolbar sx={{ justifyContent: 'space-between', px: { xs: 2, md: 4 } }}>
                 {/* 🏠 Логотип и заголовок */}
                 <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
                     <Link 
@@ -58,13 +68,7 @@ export const Header = () => {
                     >
                         <Typography
                             variant="h6"
-                            sx={{
-                                fontWeight: 700,
-                                color: 'primary.main',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1,
-                            }}
+                            className="header-logo"
                         >
                             🌾 FarmSharing
                         </Typography>
@@ -75,10 +79,10 @@ export const Header = () => {
                 {!isMobile && (
                     <HeaderSearchBox
                         searchQuery={searchQuery}
-                        onSearchChange={setSearchQuery}
+                        onSearchChange={handleSearchChange}
                         onSearchClear={handleSearchClear}
                         onSubmit={handleSearchSubmit}
-                        placeholder={t('main.searchPlaceholder')}
+                        placeholder={t('header.searchPlaceholder')}
                     />
                 )}
 
@@ -89,7 +93,7 @@ export const Header = () => {
                         <IconButton
                             onClick={handleSearchToggle}
                             color="inherit"
-                            aria-label={t('main.search')}
+                            aria-label={t('header.search')}
                         >
                             <SearchIcon />
                         </IconButton>
@@ -98,10 +102,10 @@ export const Header = () => {
                     {/* 🛒 Корзина */}
                     <Box sx={{ position: 'relative' }}>
                         <IconButton
+                            color="inherit"
+                            aria-label={t('header.cart')}
                             component={Link}
                             to="/cart"
-                            color="inherit"
-                            aria-label={t('main.cart')}
                         >
                             <CartIcon />
                             <CartBadge count={totalItems} />
@@ -110,44 +114,36 @@ export const Header = () => {
 
                     {/* 👤 Пользователь */}
                     <IconButton
+                        color="inherit"
+                        aria-label={t('header.profile')}
                         component={Link}
                         to="/profile"
-                        color="inherit"
-                        aria-label={t('main.profile')}
                     >
                         <UserIcon />
                     </IconButton>
 
-                    {/* 🌐 Язык */}
+                    {/* 🌐 Переключатель языка */}
                     <LanguageSwitcher />
 
-                    {/* 🌙 Тема */}
+                    {/* 🌙 Переключатель темы */}
                     <ThemeSwitcher />
                 </Box>
             </Toolbar>
 
-            {/* 🔍 Поиск (мобильный, развернутый) */}
-            <Collapse in={isMobile && searchOpen} timeout={300}>
-                <Box
-                    sx={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                        borderTop: '1px solid rgba(0, 0, 0, 0.05)',
-                        backdropFilter: 'blur(15px)',
-                        px: 2,
-                        py: 2,
-                    }}
-                >
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {/* 🔍 Мобильный поиск */}
+            {isMobile && (
+                <Collapse in={searchOpen}>
+                    <Box sx={{ p: 2, backgroundColor: 'background.paper' }}>
                         <HeaderSearchBox
                             searchQuery={searchQuery}
-                            onSearchChange={setSearchQuery}
+                            onSearchChange={handleSearchChange}
                             onSearchClear={handleSearchClear}
                             onSubmit={handleSearchSubmit}
-                            placeholder={t('main.searchPlaceholder')}
+                            placeholder={t('header.searchPlaceholder')}
                         />
                     </Box>
-                </Box>
-            </Collapse>
+                </Collapse>
+            )}
         </AppBar>
     );
 };

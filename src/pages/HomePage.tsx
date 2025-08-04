@@ -2,6 +2,9 @@
 import { Box, Typography, Container, Grid, Paper } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { HeroSection } from '../widgets/hero/ui/HeroSection';
+import { FeaturedProducts } from '../entities/product/ui/FeaturedProducts';
+import { FarmProfiles } from '../entities/farm/ui/FarmProfiles';
+import { Footer } from '../widgets/footer/ui/Footer';
 
 export const HomePage = () => {
     const { t } = useTranslation();
@@ -10,6 +13,12 @@ export const HomePage = () => {
         <Box>
             {/* 🌟 Героический баннер */}
             <HeroSection />
+
+            {/* 🛍️ Рекомендуемые продукты */}
+            <FeaturedProducts />
+
+            {/* 👨‍🌾 Профили фермеров */}
+            <FarmProfiles />
 
             {/* 🌿 Преимущества */}
             <Container maxWidth={false} sx={{ py: { xs: 'var(--space-16)', sm: 'var(--space-24)', md: 'var(--space-32)' }, width: '100%' }}>
@@ -223,6 +232,9 @@ export const HomePage = () => {
                     </Typography>
                 </Container>
             </Box>
+
+            {/* 🦶 Футер */}
+            <Footer />
         </Box>
     );
 };

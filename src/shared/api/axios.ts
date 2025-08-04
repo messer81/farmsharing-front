@@ -1,7 +1,7 @@
 import axios from 'axios';
-import type { AxiosRequestConfig, AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 
-// 📡 Базовый URL для API
+// 📡 Базовый URL для API - Express сервер
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 // 🔧 Создание экземпляра Axios

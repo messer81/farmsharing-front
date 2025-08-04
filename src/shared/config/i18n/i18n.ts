@@ -25,4 +25,20 @@ i18n
         },
     });
 
+// Функция для изменения направления текста
+export const setTextDirection = (language: string) => {
+    const rtlLanguages = ['ar', 'he'];
+    const direction = rtlLanguages.includes(language) ? 'rtl' : 'ltr';
+    document.documentElement.dir = direction;
+    document.documentElement.lang = language;
+};
+
+// Инициализация направления для текущего языка
+setTextDirection(i18n.language);
+
+// Слушатель изменения языка
+i18n.on('languageChanged', (language) => {
+    setTextDirection(language);
+});
+
 export default i18n;

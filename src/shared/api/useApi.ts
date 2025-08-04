@@ -1,6 +1,36 @@
 import { useState, useCallback } from 'react';
-import { apiClient, apiUtils, type ApiResponse, type PaginatedResponse } from './api';
-import type { Product } from './mockProducts';
+import { apiClient, apiUtils } from './api';
+import type { ApiResponse, PaginatedResponse } from '../../types/api';
+
+// 🗄️ Простое кэширование
+const cache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 минут
+
+function getFromCache(key: string): any | null {
+  const cached = cache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    return cached.data;
+  }
+  return null;
+}
+
+function setCache(key: string, data: any): void {
+  cache.set(key, { data, timestamp: Date.now() });
+}
+
+function clearCache(pattern?: string): void {
+  if (pattern) {
+    // Очищаем кэш по паттерну
+    for (const key of cache.keys()) {
+      if (key.includes(pattern)) {
+        cache.delete(key);
+      }
+    }
+  } else {
+    // Очищаем весь кэш
+    cache.clear();
+  }
+}
 
 // 🎯 Типы для состояний запросов
 export interface ApiState<T> {
@@ -13,9 +43,10 @@ export interface ApiOptions {
   onSuccess?: (data: any) => void;
   onError?: (error: string) => void;
   immediate?: boolean;
+  cacheKey?: string; // Добавляем возможность указать ключ кэша
 }
 
-// 🔧 Хук для работы с API
+// 🔧 Хук для работы с API с кэшированием
 export function useApi<T>(
   apiCall: () => Promise<T>,
   options: ApiOptions = {}
@@ -30,7 +61,23 @@ export function useApi<T>(
     setState(prev => ({ ...prev, loading: true, error: null }));
     
     try {
+      // Используем переданный ключ кэша или генерируем новый
+      const cacheKey = options.cacheKey || `api_call_${Date.now()}`;
+      const cachedData = getFromCache(cacheKey);
+      
+      if (cachedData) {
+        console.log('📦 Using cached data for:', cacheKey);
+        setState({ data: cachedData, loading: false, error: null });
+        options.onSuccess?.(cachedData);
+        return cachedData;
+      }
+      
+      console.log('🔄 Fetching fresh data for:', cacheKey);
       const data = await apiCall();
+      
+      // Кэшируем результат
+      setCache(cacheKey, data);
+      
       setState({ data, loading: false, error: null });
       options.onSuccess?.(data);
       return data;
@@ -40,7 +87,7 @@ export function useApi<T>(
       options.onError?.(errorMessage);
       throw error;
     }
-  }, [apiCall, options.onSuccess, options.onError]);
+  }, [options.onSuccess, options.onError, options.cacheKey]); // Убрал apiCall из зависимостей
 
   const reset = useCallback(() => {
     setState({ data: null, loading: false, error: null });
@@ -53,57 +100,127 @@ export function useApi<T>(
   };
 }
 
-// 🛍️ Хуки для продуктов
+// 🛍️ Стабильные хуки для продуктов
+export function useProductsPaginated(page: number, limit: number) {
+  return useApi(() => apiClient.products.getPaginated(page, limit), { 
+    cacheKey: `products_paginated_${page}_${limit}` 
+  });
+}
+
+export function useProductsAll() {
+  return useApi(() => apiClient.products.getAll(), { 
+    cacheKey: 'products_all' 
+  });
+}
+
+export function useProductsById(id: number) {
+  return useApi(() => apiClient.products.getById(id), { 
+    cacheKey: `products_by_id_${id}` 
+  });
+}
+
+export function useProductsSearch(query: string) {
+  return useApi(() => apiClient.products.search(query), { 
+    cacheKey: `products_search_${query}` 
+  });
+}
+
+export function useProductsByCategory(category: string) {
+  return useApi(() => apiClient.products.getByCategory(category), { 
+    cacheKey: `products_category_${category}` 
+  });
+}
+
+// 🏭 Стабильные хуки для ферм
+export function useFarmsAll() {
+  return useApi(() => apiClient.farms.getAll(), { 
+    cacheKey: 'farms_all' 
+  });
+}
+
+export function useFarmsById(id: number) {
+  return useApi(() => apiClient.farms.getById(id), { 
+    cacheKey: `farms_by_id_${id}` 
+  });
+}
+
+export function useFarmsProducts(farmId: number) {
+  return useApi(() => apiClient.farms.getProducts(farmId), { 
+    cacheKey: `farms_products_${farmId}` 
+  });
+}
+
+// 🛒 Стабильные хуки для корзины
+export function useCartGet() {
+  return useApi(() => apiClient.cart.getCart(), { 
+    cacheKey: 'cart_get' 
+  });
+}
+
+export function useCartAdd() {
+  return useMutation(({ productId, quantity }: { productId: number; quantity: number }) => 
+    apiClient.cart.addToCart(productId, quantity), { 
+    cacheKey: 'cart_add' 
+  });
+}
+
+export function useCartUpdate() {
+  return useMutation(({ itemId, quantity }: { itemId: number; quantity: number }) => 
+    apiClient.cart.updateCartItem(itemId, quantity), { 
+    cacheKey: 'cart_update' 
+  });
+}
+
+export function useCartRemove() {
+  return useMutation((itemId: number) => 
+    apiClient.cart.removeFromCart(itemId), { 
+    cacheKey: 'cart_remove' 
+  });
+}
+
+export function useCartClear() {
+  return useMutation(() => apiClient.cart.clearCart(), { 
+    cacheKey: 'cart_clear' 
+  });
+}
+
+// 🛍️ Хуки для продуктов (для обратной совместимости)
 export function useProducts() {
-  const getAll = useCallback(() => apiClient.products.getAll(), []);
-  const getPaginated = useCallback((page: number, limit: number) => 
-    apiClient.products.getPaginated(page, limit), []);
-  const getById = useCallback((id: number) => apiClient.products.getById(id), []);
-  const search = useCallback((query: string) => apiClient.products.search(query), []);
-  const getByCategory = useCallback((category: string) => 
-    apiClient.products.getByCategory(category), []);
-
   return {
-    getAll: () => useApi(getAll),
-    getPaginated: (page: number, limit: number) => useApi(() => getPaginated(page, limit)),
-    getById: (id: number) => useApi(() => getById(id)),
-    search: (query: string) => useApi(() => search(query)),
-    getByCategory: (category: string) => useApi(() => getByCategory(category)),
+    getAll: () => useApi(() => apiClient.products.getAll(), { cacheKey: 'products_all' }),
+    getPaginated: (page: number, limit: number) => 
+      useApi(() => apiClient.products.getPaginated(page, limit), { cacheKey: `products_paginated_${page}_${limit}` }),
+    getById: (id: number) => 
+      useApi(() => apiClient.products.getById(id), { cacheKey: `products_by_id_${id}` }),
+    search: (query: string) => 
+      useApi(() => apiClient.products.search(query), { cacheKey: `products_search_${query}` }),
+    getByCategory: (category: string) => 
+      useApi(() => apiClient.products.getByCategory(category), { cacheKey: `products_category_${category}` }),
   };
 }
 
-// 🏭 Хуки для ферм
+// 🏭 Хуки для ферм (для обратной совместимости)
 export function useFarms() {
-  const getAll = useCallback(() => apiClient.farms.getAll(), []);
-  const getById = useCallback((id: number) => apiClient.farms.getById(id), []);
-  const getProducts = useCallback((farmId: number) => apiClient.farms.getProducts(farmId), []);
-
   return {
-    getAll: () => useApi(getAll),
-    getById: (id: number) => useApi(() => getById(id)),
-    getProducts: (farmId: number) => useApi(() => getProducts(farmId)),
+    getAll: () => useApi(() => apiClient.farms.getAll(), { cacheKey: 'farms_all' }),
+    getById: (id: number) => 
+      useApi(() => apiClient.farms.getById(id), { cacheKey: `farms_by_id_${id}` }),
+    getProducts: (farmId: number) => 
+      useApi(() => apiClient.farms.getProducts(farmId), { cacheKey: `farms_products_${farmId}` }),
   };
 }
 
-// 🛒 Хуки для корзины
+// 🛒 Хуки для корзины (для обратной совместимости)
 export function useCart() {
-  const getCart = useCallback(() => apiClient.cart.getCart(), []);
-  const addToCart = useCallback((productId: number, quantity: number = 1) => 
-    apiClient.cart.addToCart(productId, quantity), []);
-  const updateCartItem = useCallback((itemId: number, quantity: number) => 
-    apiClient.cart.updateCartItem(itemId, quantity), []);
-  const removeFromCart = useCallback((itemId: number) => 
-    apiClient.cart.removeFromCart(itemId), []);
-  const clearCart = useCallback(() => apiClient.cart.clearCart(), []);
-
   return {
-    getCart: () => useApi(getCart),
+    getCart: () => useApi(() => apiClient.cart.getCart(), { cacheKey: 'cart_get' }),
     addToCart: (productId: number, quantity: number = 1) => 
-      useApi(() => addToCart(productId, quantity)),
+      useApi(() => apiClient.cart.addToCart(productId, quantity), { cacheKey: `cart_add_${productId}_${quantity}` }),
     updateCartItem: (itemId: number, quantity: number) => 
-      useApi(() => updateCartItem(itemId, quantity)),
-    removeFromCart: (itemId: number) => useApi(() => removeFromCart(itemId)),
-    clearCart: () => useApi(clearCart),
+      useApi(() => apiClient.cart.updateCartItem(itemId, quantity), { cacheKey: `cart_update_${itemId}_${quantity}` }),
+    removeFromCart: (itemId: number) => 
+      useApi(() => apiClient.cart.removeFromCart(itemId), { cacheKey: `cart_remove_${itemId}` }),
+    clearCart: () => useApi(() => apiClient.cart.clearCart(), { cacheKey: 'cart_clear' }),
   };
 }
 
@@ -146,4 +263,7 @@ export function useMutation<T, R>(
 }
 
 // 🎯 Экспорт типов
-export type { ApiResponse, PaginatedResponse }; 
+export type { ApiResponse, PaginatedResponse };
+
+// Экспортируем функцию очистки кэша
+export { clearCache }; 

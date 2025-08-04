@@ -71,6 +71,151 @@ app.get('/api/products/category/:category', (req, res) => {
   });
 });
 
+// 🏭 Farms API
+app.get('/api/farms', (req, res) => {
+  // Создаем уникальные фермы из продуктов
+  const farms = [...new Set(mockProducts.map(p => p.farmName))].map((farmName, index) => ({
+    id: index + 1,
+    name: farmName,
+    description: `Ферма ${farmName} - производитель свежих продуктов`,
+    location: `Регион ${index + 1}`,
+    rating: (4 + Math.random()).toFixed(1),
+    productsCount: mockProducts.filter(p => p.farmName === farmName).length
+  }));
+  
+  res.json({
+    data: farms,
+    total: farms.length
+  });
+});
+
+app.get('/api/farms/:id', (req, res) => {
+  const { id } = req.params;
+  const farms = [...new Set(mockProducts.map(p => p.farmName))].map((farmName, index) => ({
+    id: index + 1,
+    name: farmName,
+    description: `Ферма ${farmName} - производитель свежих продуктов`,
+    location: `Регион ${index + 1}`,
+    rating: (4 + Math.random()).toFixed(1),
+    productsCount: mockProducts.filter(p => p.farmName === farmName).length
+  }));
+  
+  const farm = farms.find(f => f.id === parseInt(id));
+  
+  if (!farm) {
+    return res.status(404).json({ error: 'Farm not found' });
+  }
+  
+  res.json(farm);
+});
+
+app.get('/api/farms/:id/products', (req, res) => {
+  const { id } = req.params;
+  const farms = [...new Set(mockProducts.map(p => p.farmName))].map((farmName, index) => ({
+    id: index + 1,
+    name: farmName
+  }));
+  
+  const farm = farms.find(f => f.id === parseInt(id));
+  
+  if (!farm) {
+    return res.status(404).json({ error: 'Farm not found' });
+  }
+  
+  const farmProducts = mockProducts.filter(p => p.farmName === farm.name);
+  
+  res.json({
+    data: farmProducts,
+    total: farmProducts.length
+  });
+});
+
+// 🛒 Cart API
+let cartItems = [];
+
+app.get('/api/cart', (req, res) => {
+  res.json({
+    data: cartItems,
+    total: cartItems.length,
+    totalPrice: cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  });
+});
+
+app.post('/api/cart/add', (req, res) => {
+  const { productId, quantity = 1 } = req.body;
+  
+  const product = mockProducts.find(p => p.id === productId);
+  if (!product) {
+    return res.status(404).json({ error: 'Product not found' });
+  }
+  
+  const existingItem = cartItems.find(item => item.productId === productId);
+  
+  if (existingItem) {
+    existingItem.quantity += quantity;
+  } else {
+    cartItems.push({
+      id: Date.now(),
+      productId,
+      title: product.title,
+      price: product.price,
+      quantity,
+      image: product.image
+    });
+  }
+  
+  res.json({
+    data: cartItems,
+    total: cartItems.length,
+    totalPrice: cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  });
+});
+
+app.put('/api/cart/:itemId', (req, res) => {
+  const { itemId } = req.params;
+  const { quantity } = req.body;
+  
+  const item = cartItems.find(item => item.id === parseInt(itemId));
+  if (!item) {
+    return res.status(404).json({ error: 'Cart item not found' });
+  }
+  
+  item.quantity = quantity;
+  
+  res.json({
+    data: cartItems,
+    total: cartItems.length,
+    totalPrice: cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  });
+});
+
+app.delete('/api/cart/:itemId', (req, res) => {
+  const { itemId } = req.params;
+  
+  const itemIndex = cartItems.findIndex(item => item.id === parseInt(itemId));
+  if (itemIndex === -1) {
+    return res.status(404).json({ error: 'Cart item not found' });
+  }
+  
+  cartItems.splice(itemIndex, 1);
+  
+  res.json({
+    data: cartItems,
+    total: cartItems.length,
+    totalPrice: cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  });
+});
+
+app.delete('/api/cart', (req, res) => {
+  cartItems = [];
+  
+  res.json({
+    data: [],
+    total: 0,
+    totalPrice: 0
+  });
+});
+
 // 🏠 Health check
 app.get('/', (req, res) => {
   res.json({ 
@@ -80,7 +225,15 @@ app.get('/', (req, res) => {
       'GET /api/products',
       'GET /api/products/:id',
       'GET /api/products/search?q=query',
-      'GET /api/products/category/:category'
+      'GET /api/products/category/:category',
+      'GET /api/farms',
+      'GET /api/farms/:id',
+      'GET /api/farms/:id/products',
+      'GET /api/cart',
+      'POST /api/cart/add',
+      'PUT /api/cart/:itemId',
+      'DELETE /api/cart/:itemId',
+      'DELETE /api/cart'
     ]
   });
 });
