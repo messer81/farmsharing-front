@@ -7,7 +7,8 @@
                      import PhoneIcon from '@mui/icons-material/Phone';
                      import VerifiedIcon from '@mui/icons-material/Verified';
                      import { useTranslation } from 'react-i18next';
-                     import { ProductCard } from '../../product/ui/ProductCard';
+import { ProductCard } from '../../product/ui/ProductCard';
+import { useLocalizedData } from '../../../shared/lib/useLocalizedData';
 import type { Farm } from '../../../types';
 import type { Product } from '../../../types/api';
 
@@ -16,9 +17,10 @@ import type { Product } from '../../../types/api';
                      }
 
                      export const FarmProfile = ({ farm }: FarmProfileProps) => {
-                         const { t } = useTranslation();
-                         const [activeTab, setActiveTab] = useState(0);
-                         const [farmProducts, setFarmProducts] = useState<Product[]>([]);
+    const { t } = useTranslation();
+    const { getFarmTitle, getFarmDescription } = useLocalizedData();
+    const [activeTab, setActiveTab] = useState(0);
+    const [farmProducts, setFarmProducts] = useState<Product[]>([]);
 
                          useEffect(() => {
                              // Временно используем пустой массив, так как mockProducts удален
@@ -49,11 +51,11 @@ import type { Product } from '../../../types/api';
                                                          border: '4px solid white',
                                                          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
                                                      }}
-                                                     alt={farm.name}
-                                                     src={farm.imageUrl || '/placeholder-farm.jpg'}
+                                                     alt={getFarmTitle(farm)}
+                                                                                                           src={farm.image || '/placeholder-farm.jpg'}
                                                  />
                                                  <Typography variant="h5" fontWeight="bold" gutterBottom>
-                                                     {farm.name}
+                                                     {getFarmTitle(farm)}
                                                  </Typography>
                                                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                                      <Rating value={farm.rating} precision={0.1} readOnly />
@@ -61,7 +63,7 @@ import type { Product } from '../../../types/api';
                                                          ({farm.rating})
                                                      </Typography>
 
-                                                     {farm.isVerified && (
+                                                                                                           {farm.verified && (
                                                          <Box sx={{ display: 'flex', alignItems: 'center', ml: 1, color: 'primary.main' }}>
                                                              <VerifiedIcon fontSize="small" sx={{ mr: 0.5 }} />
                                                              <Typography variant="body2">
@@ -76,30 +78,30 @@ import type { Product } from '../../../types/api';
                                          {/* ИСПРАВЛЕНО: Удалено свойство 'item' */}
                                          <Grid xs={12} md={9}>
                                              <Typography variant="body1" paragraph>
-                                                 {farm.description || t('farm.noDescription')}
+                                                 {getFarmDescription(farm) || t('farm.noDescription')}
                                              </Typography>
 
                                              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                                                  <LocationOnIcon color="primary" sx={{ mr: 1 }} />
                                                  <Typography variant="body1">
-                                                     {farm.location || farm.city}
+                                                                                                           {farm.location}
                                                  </Typography>
                                              </Box>
 
-                                             {farm.email && (
+                                                                                           {farm.contact?.email && (
                                                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                                                      <EmailIcon color="primary" sx={{ mr: 1 }} />
                                                      <Typography variant="body1">
-                                                         {farm.email}
+                                                                                                                   {farm.contact?.email}
                                                      </Typography>
                                                  </Box>
                                              )}
 
-                                             {farm.phone && (
+                                                                                           {farm.contact?.phone && (
                                                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                                                      <PhoneIcon color="primary" sx={{ mr: 1 }} />
                                                      <Typography variant="body1">
-                                                         {farm.phone}
+                                                                                                                   {farm.contact?.phone}
                                                      </Typography>
                                                  </Box>
                                              )}
@@ -160,7 +162,7 @@ import type { Product } from '../../../types/api';
                                              </Typography>
 
                                              <Typography paragraph>
-                                                 {farm.description || t('farm.noDescription')}
+                                                 {getFarmDescription(farm) || t('farm.noDescription')}
                                              </Typography>
                                          </Box>
                                      )}

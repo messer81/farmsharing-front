@@ -1,5 +1,5 @@
 // 🛒 Кастомный компонент бейджа корзины
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 
 interface CartBadgeProps {
   count: number;

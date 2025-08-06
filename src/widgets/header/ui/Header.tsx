@@ -1,5 +1,5 @@
 // 🎯 Главный хедер приложения
-import { useState, useCallback } from 'react';
+import { useState, useCallback, Fragment } from 'react';
 import { 
     AppBar, 
     Toolbar, 
@@ -10,24 +10,33 @@ import {
     useTheme,
     useMediaQuery
 } from '@mui/material';
-import { Search as SearchIcon, ShoppingCart as CartIcon, Person as UserIcon } from '@mui/icons-material';
+import { Search as SearchIcon, Person as UserIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { HeaderSearchBox } from '../../../shared/ui/HeaderSearchBox';
-import { CartBadge } from '../../../shared/ui/CartBadge';
-import { useCart } from '../../../features/cart/model/useCart';
+import { CartButton } from '../../../features/cart/ui/CartButton';
+import { UserMenu } from './UserMenu';
+import AuthFrame from '../../../features/auth/ui/AuthFrame';
+import { useAppSelector } from '../../../app/store/store';
+import { selectUser, selectIsAuthenticated } from '../../../features/auth/model/userSlice';
 
 export const Header = () => {
     const { t } = useTranslation();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-    const { totalItems } = useCart();
     
     // Состояние поиска
     const [searchQuery, setSearchQuery] = useState('');
     const [searchOpen, setSearchOpen] = useState(false);
+    
+    // Состояние модалки авторизации
+    const [authModalOpen, setAuthModalOpen] = useState(false);
+    
+    // Redux состояние
+    const user = useAppSelector(selectUser);
+    const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
     // Мемоизированные обработчики
     const handleSearchToggle = useCallback(() => {
@@ -37,7 +46,7 @@ export const Header = () => {
     const handleSearchSubmit = useCallback((e: React.FormEvent) => {
         e.preventDefault();
         // Логика поиска
-        console.log('Search submitted:', searchQuery);
+    
     }, [searchQuery]);
 
     const handleSearchClear = useCallback(() => {
@@ -48,11 +57,22 @@ export const Header = () => {
         setSearchQuery(value);
     }, []);
 
+    const handleUserClick = useCallback(() => {
+        if (!isAuthenticated) {
+            setAuthModalOpen(true);
+        }
+    }, [isAuthenticated]);
+
+    const handleAuthModalClose = useCallback(() => {
+        setAuthModalOpen(false);
+    }, []);
+
     return (
-        <AppBar 
-            position="sticky" 
-            elevation={0}
-        >
+        <Fragment>
+            <AppBar 
+                position="sticky" 
+                elevation={0}
+            >
             <Toolbar sx={{ justifyContent: 'space-between', px: { xs: 2, md: 4 } }}>
                 {/* 🏠 Логотип и заголовок */}
                 <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
@@ -100,27 +120,20 @@ export const Header = () => {
                     )}
 
                     {/* 🛒 Корзина */}
-                    <Box sx={{ position: 'relative' }}>
-                        <IconButton
-                            color="inherit"
-                            aria-label={t('header.cart')}
-                            component={Link}
-                            to="/cart"
-                        >
-                            <CartIcon />
-                            <CartBadge count={totalItems} />
-                        </IconButton>
-                    </Box>
+                    <CartButton />
 
                     {/* 👤 Пользователь */}
-                    <IconButton
-                        color="inherit"
-                        aria-label={t('header.profile')}
-                        component={Link}
-                        to="/profile"
-                    >
-                        <UserIcon />
-                    </IconButton>
+                    {isAuthenticated ? (
+                        <UserMenu />
+                    ) : (
+                        <IconButton
+                            color="inherit"
+                            aria-label={t('header.profile')}
+                            onClick={handleUserClick}
+                        >
+                            <UserIcon />
+                        </IconButton>
+                    )}
 
                     {/* 🌐 Переключатель языка */}
                     <LanguageSwitcher />
@@ -145,5 +158,13 @@ export const Header = () => {
                 </Collapse>
             )}
         </AppBar>
+        
+            {/* 🔐 Модалка авторизации */}
+            <AuthFrame
+                open={authModalOpen}
+                onClose={handleAuthModalClose}
+                onSuccess={handleAuthModalClose}
+            />
+        </Fragment>
     );
 };

@@ -1,6 +1,6 @@
-// 🛍️ Redux Toolkit слайс для управления(состоянием) продуктов, фильтрация, выбор продукта
+// 🛍️ Redux Toolkit слайс для управления продуктами
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { Product } from '../../../types';
+import type { Product } from '../../../types/api';
 
 // Экспортируем тип Product для использования в компонентах
 export type { Product } from '../../../types';

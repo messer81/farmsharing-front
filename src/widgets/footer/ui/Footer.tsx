@@ -1,10 +1,10 @@
 // 🦶 Футер для главной страницы
 import { Box, Typography, Container, Grid, Link, IconButton } from '@mui/material';
 import { Facebook, Twitter, Instagram, LinkedIn, Email, Phone, LocationOn } from '@mui/icons-material';
-import { useTranslation } from 'react-i18next';
+// import { useTranslation } from 'react-i18next';
 
 export const Footer = () => {
-    const { t } = useTranslation();
+    // const { t } = useTranslation();
 
     return (
         <Box

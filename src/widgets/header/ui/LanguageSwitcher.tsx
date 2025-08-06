@@ -3,12 +3,13 @@ import { IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import { Language as LanguageIcon } from '@mui/icons-material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import CountryFlag from 'react-country-flag';
 
 const languages = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'ru', name: 'Русский', flag: '🇷🇺' },
-    { code: 'he', name: 'עברית', flag: '🇮🇱' },
-    { code: 'ar', name: 'العربية', flag: '🇸🇦' },
+    { code: 'en', name: 'English', countryCode: 'US' },
+    { code: 'ru', name: 'Русский', countryCode: 'RU' },
+    { code: 'he', name: 'עברית', countryCode: 'IL' },
+    { code: 'ar', name: 'العربية', countryCode: 'SA' },
 ];
 
 export const LanguageSwitcher = () => {
@@ -51,16 +52,18 @@ export const LanguageSwitcher = () => {
                     vertical: 'top',
                     horizontal: 'right',
                 }}
-                PaperProps={{
-                    sx: {
-                        backgroundColor: 'background.paper',
-                        border: '1px solid',
-                        borderColor: 'divider',
-                        borderRadius: 2,
-                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
-                        mt: 1,
-                        minWidth: 160,
-                    },
+                slotProps={{
+                    paper: {
+                        sx: {
+                            backgroundColor: 'background.paper',
+                            border: '1px solid',
+                            borderColor: 'divider',
+                            borderRadius: 2,
+                            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+                            mt: 1,
+                            minWidth: 160,
+                        },
+                    }
                 }}
             >
                 {languages.map((language) => (
@@ -87,8 +90,29 @@ export const LanguageSwitcher = () => {
                             },
                         }}
                     >
-                        <Typography sx={{ fontSize: '1rem' }}>
-                            {language.flag}
+                        <CountryFlag 
+                            countryCode={language.countryCode}
+                            svg
+                            style={{
+                                width: '20px',
+                                height: '15px',
+                                marginRight: '8px'
+                            }}
+                        />
+                        <Typography 
+                            sx={{ 
+                                fontSize: '0.75rem',
+                                fontWeight: 600,
+                                backgroundColor: 'primary.main',
+                                color: 'white',
+                                px: 0.5,
+                                py: 0.25,
+                                borderRadius: 0.5,
+                                minWidth: '20px',
+                                textAlign: 'center'
+                            }}
+                        >
+                            {language.countryCode}
                         </Typography>
                         <Typography
                             sx={{

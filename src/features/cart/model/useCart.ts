@@ -1,14 +1,12 @@
-// 🛒 Хук для работы с корзиной через Redux и API
+// 🛒 Хук для работы с корзиной через Redux
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useRef } from 'react';
 import {
     addToCart, removeFromCart, updateQuantity, clearCart as clearCartAction,
-    openCart, closeCart, toggleCart, setCartItems, setLoading, setError,
+    openCart, closeCart, toggleCart, setLoading, setError,
     selectCartItems, selectCartIsOpen, selectTotalItems, selectTotalPrice,
     selectCartLoading, selectCartError
 } from './cartSlice';
-import { useCart as useCartApi, clearCache } from '../../../shared/api/useApi';
-import type { Product } from '../../../types';
+import type { Product } from '../../../types/api';
 
 export const useCart = () => {
     const dispatch = useDispatch();
@@ -21,127 +19,56 @@ export const useCart = () => {
     const loading = useSelector(selectCartLoading);
     const error = useSelector(selectCartError);
 
-    // Используем новый API хук для корзины с кэшированием
-    const cartApi = useCartApi();
-    const { data: apiCart, loading: apiLoading, error: apiError, execute: fetchCart } = cartApi.getCart();
-    
-    // Флаг для предотвращения множественных запросов
-    const hasInitialized = useRef(false);
-
-    // Загружаем корзину при монтировании компонента (только один раз)
-    useEffect(() => {
-        if (!hasInitialized.current) {
-            hasInitialized.current = true;
-            fetchCart();
-        }
-    }, []); // Убираем fetchCart из зависимостей
-
-    // Синхронизируем состояние API с Redux
-    useEffect(() => {
-        if (apiCart?.data) {
-            dispatch(setCartItems(apiCart.data.items || []));
-            dispatch(setLoading(false));
-        }
-    }, [apiCart, dispatch]);
-
-    useEffect(() => {
-        if (apiLoading) {
-            dispatch(setLoading(true));
-        }
-    }, [apiLoading, dispatch]);
-
-    useEffect(() => {
-        if (apiError) {
-            dispatch(setError(apiError));
-        }
-    }, [apiError, dispatch]);
-
     // Методы для работы с корзиной
-    const addItem = async (product: Product, quantity: number = 1) => {
+    const addItem = (product: Product, quantity: number = 1) => {
         try {
             dispatch(setLoading(true));
             
-            // Добавляем в Redux для мгновенного UI
+            // Добавляем в Redux
             dispatch(addToCart({ product, quantity }));
-            
-            // Синхронизируем с сервером
-            const addToCartApi = cartApi.addToCart(product.id, quantity);
-            await addToCartApi.execute();
-            
-            // Очищаем кэш корзины после изменения
-            clearCache('cart');
             
             dispatch(setLoading(false));
         } catch (err) {
             dispatch(setError(err instanceof Error ? err.message : 'Failed to add item to cart'));
-            // Откатываем изменения в Redux при ошибке
-            dispatch(removeFromCart(product.id));
         }
     };
 
-    const removeItem = async (productId: number) => {
+    const removeItem = (productId: number) => {
         try {
             dispatch(setLoading(true));
             
-            // Удаляем из Redux для мгновенного UI
+            // Удаляем из Redux
             dispatch(removeFromCart(productId));
-            
-            // Синхронизируем с сервером
-            const removeFromCartApi = cartApi.removeFromCart(productId);
-            await removeFromCartApi.execute();
-            
-            // Очищаем кэш корзины после изменения
-            clearCache('cart');
             
             dispatch(setLoading(false));
         } catch (err) {
             dispatch(setError(err instanceof Error ? err.message : 'Failed to remove item from cart'));
-            // При ошибке перезагружаем корзину с сервера
-            fetchCart();
         }
     };
 
-    const updateItemQuantity = async (productId: number, quantity: number) => {
+    const updateItemQuantity = (productId: number, quantity: number) => {
         try {
             dispatch(setLoading(true));
             
-            // Обновляем в Redux для мгновенного UI
-            dispatch(updateQuantity({ productId, quantity }));
-            
-            // Синхронизируем с сервером
-            const updateCartItemApi = cartApi.updateCartItem(productId, quantity);
-            await updateCartItemApi.execute();
-            
-            // Очищаем кэш корзины после изменения
-            clearCache('cart');
+            // Обновляем в Redux
+            dispatch(updateQuantity({ id: productId, quantity }));
             
             dispatch(setLoading(false));
         } catch (err) {
             dispatch(setError(err instanceof Error ? err.message : 'Failed to update item quantity'));
-            // При ошибке перезагружаем корзину с сервера
-            fetchCart();
         }
     };
 
-    const clearCart = async () => {
+    const clearCart = () => {
         try {
             dispatch(setLoading(true));
             
-            // Очищаем в Redux для мгновенного UI
+            // Очищаем в Redux
             dispatch(clearCartAction());
-            
-            // Синхронизируем с сервером
-            const clearCartApi = cartApi.clearCart();
-            await clearCartApi.execute();
-            
-            // Очищаем кэш корзины после изменения
-            clearCache('cart');
             
             dispatch(setLoading(false));
         } catch (err) {
             dispatch(setError(err instanceof Error ? err.message : 'Failed to clear cart'));
-            // При ошибке перезагружаем корзину с сервера
-            fetchCart();
         }
     };
 
@@ -157,28 +84,14 @@ export const useCart = () => {
         dispatch(toggleCart());
     };
 
-    // Обновить корзину с сервера
-    const refreshCart = async () => {
-        try {
-            await fetchCart();
-        } catch (err) {
-            dispatch(setError(err instanceof Error ? err.message : 'Failed to refresh cart'));
-        }
-    };
-
     return {
         // Данные
         items,
         isOpen,
         totalItems,
         totalPrice,
-        loading: loading || apiLoading,
-        error: error || apiError,
-
-        // API данные
-        apiCart: apiCart?.data,
-        apiLoading,
-        apiError,
+        loading,
+        error,
 
         // Методы
         addItem,
@@ -188,6 +101,5 @@ export const useCart = () => {
         open,
         close,
         toggle,
-        refreshCart,
     };
 };

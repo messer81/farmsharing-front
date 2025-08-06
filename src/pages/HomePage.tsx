@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { HeroSection } from '../widgets/hero/ui/HeroSection';
 import { FeaturedProducts } from '../entities/product/ui/FeaturedProducts';
 import { FarmProfiles } from '../entities/farm/ui/FarmProfiles';
-import { Footer } from '../widgets/footer/ui/Footer';
 
 export const HomePage = () => {
     const { t } = useTranslation();
@@ -234,7 +233,7 @@ export const HomePage = () => {
             </Box>
 
             {/* 🦶 Футер */}
-            <Footer />
+            {/* The Footer component is now global, so it's removed from here. */}
         </Box>
     );
 };

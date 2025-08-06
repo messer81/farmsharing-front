@@ -1,0 +1,101 @@
+[
+  {
+    "id": 1,
+    "name": "Иван Петров",
+    "email": "ivan@example.com",
+    "password": "$2b$10$sZiz6G0p6oGTu2Pn2W.VfOtzMqUQuUu0K9bzJ4NbXuijP96iYiRZq",
+    "phone": "+7 (999) 123-45-67",
+    "address": "ул. Пушкина, д. 10, кв. 5",
+    "preferredLanguage": "ru",
+    "role": "user",
+    "createdAt": "2024-01-01T10:00:00Z",
+    "updatedAt": "2024-01-20T15:30:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Admin User",
+    "email": "admin@example.com",
+    "password": "$2b$10$sZiz6G0p6oGTu2Pn2W.VfOtzMqUQuUu0K9bzJ4NbXuijP96iYiRZq",
+    "phone": "+7 (999) 000-00-00",
+    "address": "Admin Office",
+    "preferredLanguage": "ru",
+    "role": "admin",
+    "createdAt": "2024-01-01T09:00:00Z",
+    "updatedAt": "2024-01-20T16:00:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Тестовый Пользователь",
+    "email": "test@example.com",
+    "password": "$2b$10$sZiz6G0p6oGTu2Pn2W.VfOtzMqUQuUu0K9bzJ4NbXuijP96iYiRZq",
+    "phone": "+7 (999) 999-99-99",
+    "address": "Тестовый адрес",
+    "preferredLanguage": "ru",
+    "role": "user",
+    "createdAt": "2024-01-01T11:00:00Z",
+    "updatedAt": "2024-01-20T17:00:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Простой Тест",
+    "email": "simple@test.com",
+    "password": "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi",
+    "phone": "+7 (999) 111-11-11",
+    "address": "Простой адрес",
+    "preferredLanguage": "ru",
+    "role": "user",
+    "createdAt": "2024-01-01T12:00:00Z",
+    "updatedAt": "2024-01-20T18:00:00Z"
+  },
+  {
+    "id": 5,
+    "name": "Алекс",
+    "email": "alex777@list.ru",
+    "password": "$2b$10$sZiz6G0p6oGTu2Pn2W.VfOtzMqUQuUu0K9bzJ4NbXuijP96iYiRZq",
+    "phone": "+7 (999) 777-77-77",
+    "address": "Москва, ул. Примерная, д. 1",
+    "preferredLanguage": "ru",
+    "role": "user",
+    "createdAt": "2024-01-01T13:00:00Z",
+    "updatedAt": "2024-01-20T19:00:00Z"
+  },
+  {
+    "id": 6,
+    "name": "Alexey",
+    "email": "alexmigdalhaemek@gmail.com",
+    "password": "$2b$10$6Xw2A5prubehTJrrDIYtvOqXMPPtHw4qW0x7CG1uPI6QyBwM55sMm",
+    "phone": "",
+    "address": "",
+    "preferredLanguage": "ru",
+    "role": "user",
+    "googleId": "109663937518200348141",
+    "createdAt": "2025-08-05T23:34:12.907Z",
+    "updatedAt": "2025-08-05T23:34:12.907Z"
+  },
+  {
+    "id": 7,
+    "name": "Алексей Федоров",
+    "email": "alexey.fedorov.141@gmail.com",
+    "password": "$2b$10$L.psvHR9xMcmaH9L8YuGtumq.JMxyeECeDYiiIZheAt5kGuKtFvZC",
+    "phone": "",
+    "address": "",
+    "preferredLanguage": "ru",
+    "role": "user",
+    "googleId": "111896938215467950778",
+    "createdAt": "2025-08-05T23:39:02.462Z",
+    "updatedAt": "2025-08-05T23:39:02.462Z"
+  },
+  {
+    "id": 8,
+    "name": "Edel Isakson",
+    "email": "edelisakson@gmail.com",
+    "password": "$2b$10$q6x3X1cvYPFrTlZSZXc0TOsnWlFfeSXzjYZfMvI9gK4UUmxVxQhVu",
+    "phone": "",
+    "address": "",
+    "preferredLanguage": "ru",
+    "role": "user",
+    "googleId": "107491030868197400289",
+    "createdAt": "2025-08-05T23:39:38.329Z",
+    "updatedAt": "2025-08-05T23:39:38.329Z"
+  }
+]

@@ -2,10 +2,18 @@
 import { Box, Typography, Button, Container } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import heroImage from '../../../assets/hero-bg.jpg';
+import { useTheme } from '@mui/material/styles';
+
+// ✅ Используем ОПТИМИЗИРОВАННЫЕ JPEG (НЕ WebP!)
+import heroImageLight from '../../../assets/optimized/hero-bg-light-desktop.jpg';
+import heroImageDark from '../../../assets/optimized/hero-bg-dark-desktop.jpg';
 
 export const HeroSection = () => {
     const { t } = useTranslation();
+    const theme = useTheme();
+
+    // ✅ Выбираем МАЛЕНЬКОЕ оптимизированное изображение по теме
+    const heroImage = theme.palette.mode === 'dark' ? heroImageDark : heroImageLight;
 
     return (
         <Box
@@ -22,7 +30,7 @@ export const HeroSection = () => {
                 paddingTop: '80px', // Компенсируем отступ
             }}
         >
-            {/* 🖼️ Фоновое изображение с умеренным размытием */}
+            {/* 🖼️ Оптимизированное фоновое изображение */}
             <Box
                 sx={{
                     position: 'absolute',
@@ -30,11 +38,13 @@ export const HeroSection = () => {
                     left: 0,
                     right: 0,
                     bottom: 0,
+                    // ✅ МАЛЕНЬКОЕ оптимизированное изображение (~56KB вместо 191KB!)
                     backgroundImage: `url(${heroImage})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    filter: 'blur(2px) brightness(1.2)', // Менее сильное размытие и затенение
-                    transform: 'scale(1.05)', // Меньше масштабирование
+                    // ✅ УБРАЛИ дорогие CSS фильтры!
+                    // filter: 'blur(2px) brightness(1.2)', - УДАЛЕНО
+                    // transform: 'scale(1.05)', - УДАЛЕНО  
                     zIndex: 0,
                 }}
             />
@@ -80,10 +90,7 @@ export const HeroSection = () => {
                         }}
                     >
                         <span style={{ color: 'white' }}>
-                            Fresh from Farm
-                        </span>{' '}
-                        <span style={{ color: 'var(--color-organic-green)' }}>
-                            to Your Table
+                            {t('main.title')}
                         </span>
                     </Typography>
 
@@ -98,7 +105,7 @@ export const HeroSection = () => {
                             mx: 'auto',
                         }}
                     >
-                        Connect directly with local farmers. Get the freshest produce while supporting your community.
+                        {t('main.subtitle')}
                     </Typography>
 
                     {/* 🎯 Кнопки действий */}
@@ -120,12 +127,12 @@ export const HeroSection = () => {
                                 minWidth: { xs: '200px', sm: '220px' },
                             }}
                         >
-                            Shop Fresh Produce
+                            {t('main.buyButton')}
                         </Button>
 
                         <Button
                             component={Link}
-                            to="/sell"
+                            to="/mockProducts"
                             variant="outlined"
                             size="large"
                             sx={{
@@ -138,7 +145,7 @@ export const HeroSection = () => {
                                 },
                             }}
                         >
-                            Start Selling
+                            {t('main.sellButton')}
                         </Button>
                     </Box>
 

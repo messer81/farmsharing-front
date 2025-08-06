@@ -71,7 +71,7 @@ export const useFarm = () => {
         }
 
         // Фильтр по верификации
-        if (filters.verifiedOnly && !farm.isVerified) {
+        if (filters.verifiedOnly && !farm.verified) {
             return false;
         }
 

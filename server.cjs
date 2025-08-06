@@ -1,21 +1,53 @@
 // 🚀 Express сервер для тестирования API с Postman (CommonJS)
+const path = require('path');
+console.log('🔍 Current directory:', process.cwd());
+console.log('🔍 .env file path:', path.join(process.cwd(), '.env'));
+console.log('🔍 .env file exists:', require('fs').existsSync(path.join(process.cwd(), '.env')));
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const passport = require('passport');
+const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
+
+// 📊 Подключаем JSON "базу данных"
+const userDB = require('./data/userDatabase.cjs');
 
 // Mock данные прямо в сервере для простоты
 const mockProducts = [
   {
     id: 1,
-    title: "Свежие помидоры",
-    description: "Свежие органические помидоры с фермы",
+    title: {
+      en: "Fresh Tomatoes",
+      ru: "Свежие помидоры",
+      ar: "طماطم طازجة",
+      he: "עגבניות טריות"
+    },
+    description: {
+      en: "Fresh organic tomatoes from the farm",
+      ru: "Свежие органические помидоры с фермы",
+      ar: "طماطم عضوية طازجة من المزرعة",
+      he: "עגבניות אורגניות טריות מהחווה"
+    },
+    farmName: {
+      en: "Galil Farm",
+      ru: "Ферма Галиль",
+      ar: "مزرعة الجليل",
+      he: "חוות הגליל"
+    },
+    unit: {
+      en: "kg",
+      ru: "кг",
+      ar: "كجم",
+      he: "ק\"ג"
+    },
     price: 15.99,
     originalPrice: 18.99,
     imageUrl: "/src/assets/tomat.jpg",
     category: "vegetables",
-    farmName: "Galil Farm",
     rating: 4.8,
     isOrganic: true,
-    unit: "кг",
     stock: 50,
     tags: ["organic", "fresh", "local"],
     createdAt: "2024-01-15T10:00:00Z",
@@ -23,15 +55,35 @@ const mockProducts = [
   },
   {
     id: 2,
-    title: "Сыр халуми",
-    description: "Традиционный кипрский сыр",
+    title: {
+      en: "Halloumi Cheese",
+      ru: "Сыр халуми",
+      ar: "جبنة حلومي",
+      he: "גבינת חלומי"
+    },
+    description: {
+      en: "Traditional Cypriot cheese",
+      ru: "Традиционный кипрский сыр",
+      ar: "جبنة قبرصية تقليدية",
+      he: "גבינה קפריסאית מסורתית"
+    },
+    farmName: {
+      en: "Galil Cheese",
+      ru: "Галиль Сыр",
+      ar: "جبنة الجليل",
+      he: "גבינת הגליל"
+    },
+    unit: {
+      en: "kg",
+      ru: "кг",
+      ar: "كجم",
+      he: "ק\"ג"
+    },
     price: 35.00,
     imageUrl: "/src/assets/chease.jpg",
     category: "dairy",
-    farmName: "Galil Chees",
     rating: 4.6,
     isOrganic: false,
-    unit: "кг",
     stock: 75,
     tags: ["fresh", "local"],
     createdAt: "2024-01-16T08:00:00Z",
@@ -39,154 +91,360 @@ const mockProducts = [
   },
   {
     id: 3,
-    title: "Сладкие апельсины",
-    description: "Свежие апельсины с цитрусовой рощи",
-    price: 12.50,
-    originalPrice: 14.99,
-    imageUrl: "/src/assets/orange.jpg",
-    category: "fruits",
-    farmName: "Цитрусовая роща",
-    rating: 4.9,
-    isOrganic: true,
-    unit: "кг",
-    stock: 30,
-    tags: ["organic", "herbs", "fresh"],
-    createdAt: "2024-01-17T09:00:00Z",
-    updatedAt: "2024-01-20T12:15:00Z"
+    title: { en: "Sweet Oranges", ru: "Сладкие апельсины", ar: "برتقال حلو", he: "תפוזים מתוקים" },
+    description: { en: "Fresh oranges from a citrus grove", ru: "Свежие апельсины с цитрусовой рощи", ar: "برتقال طازج من بستان الحمضيات", he: "תפוזים טריים מגן הדרים" },
+    farmName: { en: "Citrus Grove", ru: "Цитрусовая роща", ar: "بستان الحمضيات", he: "גן הדרים" },
+    unit: { en: "kg", ru: "кг", ar: "كجم", he: "ק\"ג" },
+    price: 12.50, originalPrice: 14.99, imageUrl: "/src/assets/orange.jpg", category: "fruits", rating: 4.9, isOrganic: true, stock: 30, tags: ["organic", "herbs", "fresh"], createdAt: "2024-01-17T09:00:00Z", updatedAt: "2024-01-20T12:15:00Z"
   },
   {
     id: 4,
-    title: "Свежий базилик",
-    description: "Ароматный базилик для итальянских блюд",
-    price: 8.99,
-    originalPrice: 10.59,
-    imageUrl: "/src/assets/basil.jpg",
-    category: "herbs",
-    farmName: "Травяная ферма",
-    rating: 4.7,
-    isOrganic: true,
-    unit: "пучок",
-    stock: 40,
-    tags: ["organic", "herbs", "fresh"],
-    createdAt: "2024-01-18T07:00:00Z",
-    updatedAt: "2024-01-20T11:30:00Z"
+    title: { en: "Fresh Basil", ru: "Свежий базилик", ar: "ريحان طازج", he: "בזיליקום טרי" },
+    description: { en: "Aromatic basil for Italian dishes", ru: "Ароматный базилик для итальянских блюд", ar: "ريحان عطري للأطباق الإيطالية", he: "בזיליקום ארומטי למנות איטלקיות" },
+    farmName: { en: "Herb Farm", ru: "Травяная ферма", ar: "مزرعة الأعشاب", he: "חוות התבלינים" },
+    unit: { en: "bunch", ru: "пучок", ar: "حزمة", he: "צרור" },
+    price: 8.99, originalPrice: 10.59, imageUrl: "/src/assets/basil.jpg", category: "herbs", rating: 4.7, isOrganic: true, stock: 40, tags: ["organic", "herbs", "fresh"], createdAt: "2024-01-18T07:00:00Z", updatedAt: "2024-01-20T11:30:00Z"
   },
   {
     id: 5,
-    title: "Домашний йогурт",
-    description: "Натуральный домашний йогурт",
-    price: 18.50,
-    originalPrice: 21.76,
-    imageUrl: "/src/assets/yogurt.jpg",
-    category: "dairy",
-    farmName: "Молочная ферма",
-    rating: 4.5,
-    isOrganic: true,
-    unit: "литр",
-    stock: 25,
-    tags: ["fresh", "local"],
-    createdAt: "2024-01-19T10:00:00Z",
-    updatedAt: "2024-01-20T15:20:00Z"
+    title: { en: "Homemade Yogurt", ru: "Домашний йогурт", ar: "زبادي منزلي", he: "יוגורט ביתי" },
+    description: { en: "Natural homemade yogurt", ru: "Натуральный домашний йогурт", ar: "زبادي طبيعي منزلي", he: "יוגורט טבעי ביתי" },
+    farmName: { en: "Dairy Farm", ru: "Молочная ферма", ar: "مزرعة الألبان", he: "חוות החלב" },
+    unit: { en: "liter", ru: "литр", ar: "لتر", he: "ליטר" },
+    price: 18.50, originalPrice: 21.76, imageUrl: "/src/assets/yogurt.jpg", category: "dairy", rating: 4.5, isOrganic: true, stock: 25, tags: ["fresh", "local"], createdAt: "2024-01-19T10:00:00Z", updatedAt: "2024-01-20T15:20:00Z"
   },
   {
     id: 6,
-    title: "Мед из эвкалипта",
-    description: "Натуральный мед из эвкалиптовых цветов",
-    price: 45.00,
-    originalPrice: 52.94,
-    imageUrl: "/src/assets/honey.jpg",
-    category: "honey",
-    farmName: "Пасека Шарон",
-    rating: 4.8,
-    isOrganic: true,
-    unit: "банка 500г",
-    stock: 20,
-    tags: ["organic", "artisanal", "local"],
-    createdAt: "2024-01-20T06:00:00Z",
-    updatedAt: "2024-01-20T13:45:00Z"
+    title: { en: "Eucalyptus Honey", ru: "Мед из эвкалипта", ar: "عسل الكافور", he: "דבש אקליפטוס" },
+    description: { en: "Natural honey from eucalyptus flowers", ru: "Натуральный мед из эвкалистовых цветов", ar: "عسل طبيعي من أزهار الكافور", he: "דבש טבעי מפרחי אקליפטוס" },
+    farmName: { en: "Sharon Apiary", ru: "Пасека Шарон", ar: "منحل شارون", he: "כוורת שרון" },
+    unit: { en: "jar 500g", ru: "банка 500г", ar: "جرة 500 جرام", he: "צנצנת 500 גרם" },
+    price: 45.00, originalPrice: 52.94, imageUrl: "/src/assets/honey.jpg", category: "honey", rating: 4.8, isOrganic: true, stock: 20, tags: ["organic", "artisanal", "local"], createdAt: "2024-01-20T06:00:00Z", updatedAt: "2024-01-20T13:45:00Z"
   },
   {
     id: 7,
-    title: "Розы",
-    description: "Свежие розы разных цветов",
-    price: 25.00,
-    originalPrice: 29.41,
-    imageUrl: "/src/assets/rose.jpg",
-    category: "flowers",
-    farmName: "Цветочная ферма",
-    rating: 4.9,
-    isOrganic: true,
-    unit: "букет",
-    stock: 15,
-    tags: ["organic", "natural", "local"],
-    createdAt: "2024-01-15T12:00:00Z",
-    updatedAt: "2024-01-20T10:30:00Z"
+    title: { en: "Roses", ru: "Розы", ar: "ورود", he: "ורדים" },
+    description: { en: "Fresh roses in various colors", ru: "Свежие розы разных цветов", ar: "ورود طازجة بألوان مختلفة", he: "ורדים טריים בצבעים שונים" },
+    farmName: { en: "Flower Farm", ru: "Цветочная ферма", ar: "مزرعة الزهور", he: "חוות הפרחים" },
+    unit: { en: "bouquet", ru: "букет", ar: "باقة", he: "זר" },
+    price: 25.00, originalPrice: 29.41, imageUrl: "/src/assets/rose.jpg", category: "flowers", rating: 4.9, isOrganic: true, stock: 15, tags: ["organic", "natural", "local"], createdAt: "2024-01-15T12:00:00Z", updatedAt: "2024-01-20T10:30:00Z"
   },
   {
     id: 8,
-    title: "Огурцы",
-    description: "Свежие хрустящие огурцы",
-    price: 9.99,
-    originalPrice: 11.75,
-    imageUrl: "/src/assets/cucumber.jpg",
-    category: "vegetables",
-    farmName: "Овощная ферма",
-    rating: 4.7,
-    isOrganic: true,
-    unit: "кг",
-    stock: 35,
-    tags: ["organic", "fresh", "local"],
-    createdAt: "2024-01-20T05:00:00Z",
-    updatedAt: "2024-01-20T14:15:00Z"
+    title: { en: "Cucumbers", ru: "Огурцы", ar: "خيار", he: "מלפפונים" },
+    description: { en: "Fresh crispy cucumbers", ru: "Свежие хрустящие огурцы", ar: "خيار طازج مقرمش", he: "מלפפונים טריים ופריכים" },
+    farmName: { en: "Vegetable Farm", ru: "Овощная ферма", ar: "مزرعة الخضار", he: "חוות הירקות" },
+    unit: { en: "kg", ru: "кг", ar: "كجم", he: "ק\"ג" },
+    price: 9.99, originalPrice: 11.75, imageUrl: "/src/assets/cucumber.jpg", category: "vegetables", rating: 4.7, isOrganic: true, stock: 35, tags: ["organic", "fresh", "local"], createdAt: "2024-01-20T05:00:00Z", updatedAt: "2024-01-20T14:15:00Z"
   },
   {
     id: 9,
-    title: "Авокадо",
-    description: "Спелые авокадо Хасс",
-    price: 22.50,
-    imageUrl: "/src/assets/avocado.jpg",
-    category: "fruits",
-    farmName: "Тропическая ферма",
-    rating: 4.6,
-    isOrganic: true,
-    unit: "кг",
-    stock: 0,
-    tags: ["fresh", "vitamin-c"],
-    createdAt: "2024-01-18T08:00:00Z",
-    updatedAt: "2024-01-20T09:45:00Z"
+    title: { en: "Avocado", ru: "Авокадо", ar: "أفوكادو", he: "אבוקדו" },
+    description: { en: "Ripe Hass avocados", ru: "Спелые авокадо Хасс", ar: "أفوكادو هاس ناضج", he: "אבוקדו האס בשל" },
+    farmName: { en: "Tropical Farm", ru: "Тропическая ферма", ar: "مزرعة استوائية", he: "חווה טרופית" },
+    unit: { en: "kg", ru: "кг", ar: "كجم", he: "ק\"ג" },
+    price: 22.50, imageUrl: "/src/assets/avocado.jpg", category: "fruits", rating: 4.6, isOrganic: true, stock: 0, tags: ["fresh", "vitamin-c"], createdAt: "2024-01-18T08:00:00Z", updatedAt: "2024-01-20T09:45:00Z"
   },
   {
     id: 10,
-    title: "Мята",
-    description: "Свежая мята для чая",
-    price: 6.50,
-    originalPrice: 7.65,
-    imageUrl: "/src/assets/mint.jpg",
-    category: "herbs",
-    farmName: "Травяная ферма",
-    rating: 4.8,
-    isOrganic: true,
-    unit: "пучок",
-    stock: 10,
-    tags: ["organic", "beautiful", "fresh"],
-    createdAt: "2024-01-19T07:00:00Z",
-    updatedAt: "2024-01-20T16:00:00Z"
+    title: { en: "Mint", ru: "Мята", ar: "نعناع", he: "נענע" },
+    description: { en: "Fresh mint for tea", ru: "Свежая мята для чая", ar: "نعناع طازج للشاي", he: "נענע טרייה לתה" },
+    farmName: { en: "Herb Farm", ru: "Травяная ферма", ar: "مزرعة الأعشاب", he: "חוות התבלינים" },
+    unit: { en: "bunch", ru: "пучок", ar: "حزمة", he: "צרור" },
+    price: 6.50, originalPrice: 7.65, imageUrl: "/src/assets/mint.jpg", category: "herbs", rating: 4.8, isOrganic: true, stock: 10, tags: ["organic", "beautiful", "fresh"], createdAt: "2024-01-19T07:00:00Z", updatedAt: "2024-01-20T16:00:00Z"
   }
 ];
+
+// 📊 Пользователи теперь хранятся в JSON файле data/users.json
+// Работа с ними через userDB модуль
+
+// 🔐 JWT секрет (в реальном проекте должен быть в переменных окружения)
+const JWT_SECRET = 'your-super-secret-jwt-key-change-in-production';
+
+// 🔑 Google OAuth конфигурация
+const GOOGLE_CONFIG = {
+  clientID: process.env.GOOGLE_CLIENT_ID || 'your-client-id',
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'your-client-secret',
+  callbackURL: 'http://localhost:3000/api/auth/google/callback'
+};
+
+// 🔍 Отладочная информация
+console.log('🔍 Environment variables:');
+console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? '✅ Loaded' : '❌ Not loaded');
+console.log('GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? '✅ Loaded' : '❌ Not loaded');
+console.log('JWT_SECRET:', process.env.JWT_SECRET ? '✅ Loaded' : '❌ Not loaded');
+console.log('🔍 Google OAuth Config:');
+console.log('Client ID:', GOOGLE_CONFIG.clientID);
+console.log('Callback URL:', GOOGLE_CONFIG.callbackURL);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// 🔐 Passport конфигурация
+passport.use(new GoogleStrategy(
+  {
+    clientID: GOOGLE_CONFIG.clientID,
+    clientSecret: GOOGLE_CONFIG.clientSecret,
+    callbackURL: GOOGLE_CONFIG.callbackURL,
+  },
+  async (accessToken, refreshToken, profile, done) => {
+    try {
+      console.log('🔍 Google OAuth: Looking for user with email:', profile.emails?.[0]?.value);
+      
+      // Проверяем, существует ли пользователь в JSON базе
+      let user = userDB.findUserByEmail(profile.emails?.[0]?.value);
+
+      if (!user) {
+        console.log('🔍 Google OAuth: User not found, creating new user');
+        // Создаем нового пользователя в JSON базе
+        const userData = {
+          name: profile.displayName,
+          email: profile.emails?.[0]?.value || '',
+          password: await bcrypt.hash(Math.random().toString(36), 10),
+          phone: '',
+          address: '',
+          preferredLanguage: 'ru',
+          role: 'user',
+          googleId: profile.id
+        };
+
+        user = userDB.addUser(userData);
+        
+        if (!user) {
+          throw new Error('Failed to create user in database');
+        }
+      } else {
+        console.log('🔍 Google OAuth: Existing user found:', user.email);
+      }
+
+      return done(null, user);
+    } catch (error) {
+      console.error('❌ Google OAuth error:', error);
+      return done(error);
+    }
+  }
+));
+
 // 🔧 Middleware
 app.use(cors());
 app.use(express.json());
+app.use(passport.initialize());
 
 // 📁 Статические файлы (изображения)
 app.use('/src/assets', express.static('src/assets'));
 
+// 🔐 Middleware для проверки JWT токена
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+
+  if (!token) {
+    return res.status(401).json({ message: 'Access token required' });
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: 'Invalid or expired token' });
+    }
+    req.user = user;
+    next();
+  });
+};
+
+// 🔐 Auth API Routes
+
+// 🔑 Google OAuth маршруты
+app.get('/api/auth/google', (req, res, next) => {
+  console.log('🔍 Google OAuth request received');
+  console.log('🔍 Request URL:', req.url);
+  console.log('🔍 Request headers:', req.headers);
+  passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
+});
+
+app.get('/api/auth/google/callback', (req, res, next) => {
+  console.log('🔍 Google OAuth callback received');
+  console.log('🔍 Request URL:', req.url);
+  console.log('🔍 Request query:', req.query);
+  passport.authenticate('google', { session: false })(req, res, next);
+}, (req, res) => {
+  try {
+    console.log('🔍 Google OAuth callback processing');
+    console.log('🔍 User data:', req.user);
+    const token = jwt.sign(
+      { id: req.user.id, email: req.user.email, role: req.user.role },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    console.log('🔍 JWT token created, redirecting to frontend');
+    // Перенаправляем на фронтенд с токеном
+    res.redirect(`http://localhost:5173/auth-callback?token=${token}`);
+  } catch (error) {
+    console.log('🔍 Error in Google OAuth callback:', error);
+    res.redirect(`http://localhost:5173/auth-callback?error=Authentication failed`);
+  }
+});
+
+// 📝 Регистрация
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { name, email, password, phone, address, preferredLanguage } = req.body;
+
+    // Проверяем, существует ли пользователь в JSON базе
+    const existingUser = userDB.findUserByEmail(email);
+    if (existingUser) {
+      console.log('❌ Registration failed: User already exists:', email);
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    // Хешируем пароль
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Создаем нового пользователя в JSON базе
+    const userData = {
+      name,
+      email,
+      password: hashedPassword,
+      phone: phone || '',
+      address: address || '',
+      preferredLanguage: preferredLanguage || 'ru',
+      role: 'user'
+    };
+
+    const newUser = userDB.addUser(userData);
+    
+    if (!newUser) {
+      throw new Error('Failed to create user in database');
+    }
+    
+    console.log('✅ Registration successful:', email);
+
+    // Создаем JWT токен
+    const token = jwt.sign(
+      { id: newUser.id, email: newUser.email, role: newUser.role },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    // Возвращаем пользователя без пароля
+    const { password: _, ...userWithoutPassword } = newUser;
+    res.status(201).json({
+      message: 'User registered successfully',
+      user: userWithoutPassword,
+      token
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// 🔑 Вход
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Ищем пользователя в JSON базе
+    const user = userDB.findUserByEmail(email);
+    if (!user) {
+      console.log('❌ Login failed: User not found:', email);
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+    
+    console.log('✅ Login: User found:', email);
+
+    // Проверяем пароль
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // Создаем JWT токен
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    // Возвращаем пользователя без пароля
+    const { password: _, ...userWithoutPassword } = user;
+    res.json({
+      message: 'Login successful',
+      user: userWithoutPassword,
+      token
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// 👤 Получить профиль пользователя
+app.get('/api/auth/profile', authenticateToken, (req, res) => {
+  const user = userDB.findUserById(req.user.id);
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  const { password: _, ...userWithoutPassword } = user;
+  res.json({ user: userWithoutPassword });
+});
+
+// 🔄 Обновить профиль
+app.put('/api/auth/profile', authenticateToken, (req, res) => {
+  const { name, phone, address, preferredLanguage } = req.body;
+  
+  const updateData = {};
+  if (name) updateData.name = name;
+  if (phone) updateData.phone = phone;
+  if (address) updateData.address = address;
+  if (preferredLanguage) updateData.preferredLanguage = preferredLanguage;
+
+  const updatedUser = userDB.updateUser(req.user.id, updateData);
+  if (!updatedUser) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  const { password: _, ...userWithoutPassword } = updatedUser;
+  res.json({
+    message: 'Profile updated successfully',
+    user: userWithoutPassword
+  });
+});
+
+// 📧 Сброс пароля (имитация отправки email)
+app.post('/api/auth/forgot-password', (req, res) => {
+  const { email } = req.body;
+  
+  const user = userDB.findUserByEmail(email);
+  if (!user) {
+    // В реальном приложении не раскрываем, существует ли пользователь
+    return res.json({ message: 'If user exists, password reset email has been sent' });
+  }
+
+  // Имитация отправки email
+  console.log(`📧 Password reset email would be sent to: ${email}`);
+  res.json({ message: 'If user exists, password reset email has been sent' });
+});
+
+// 🚪 Выход (в JWT системе обычно выполняется на клиенте)
+app.post('/api/auth/logout', authenticateToken, (req, res) => {
+  // В JWT системе logout обычно обрабатывается на клиенте
+  // Здесь можно добавить логику blacklist токенов, если необходимо
+  res.json({ message: 'Logout successful' });
+});
+
 // 📡 API Routes
+
+// 🛍️ Mock Products endpoint для совместимости
+app.get('/mockProducts', (req, res) => {
+  res.json({
+    data: mockProducts,
+    total: mockProducts.length,
+    message: 'Mock products data'
+  });
+});
+
 app.get('/api/products', (req, res) => {
-  const { page = 1, limit = 8 } = req.query;
+  const { page = 1, limit = 10 } = req.query;
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + parseInt(limit);
   
@@ -248,14 +506,18 @@ app.get('/api/products/category/:category', (req, res) => {
 // 🏭 Farms API endpoints
 app.get('/api/farms', (req, res) => {
   // Создаем уникальные фермы из продуктов
-  const farms = [...new Set(mockProducts.map(p => p.farmName))].map((farmName, index) => ({
-    id: index + 1,
-    name: farmName,
-    description: `Ферма ${farmName} - производитель свежих продуктов`,
-    location: `Регион ${index + 1}`,
-    rating: (4 + Math.random()).toFixed(1),
-    productsCount: mockProducts.filter(p => p.farmName === farmName).length
-  }));
+  const uniqueFarmNames = [...new Set(mockProducts.map(p => JSON.stringify(p.farmName)))];
+  const farms = uniqueFarmNames.map((farmNameStr, index) => {
+    const farmName = JSON.parse(farmNameStr);
+    return {
+      id: index + 1,
+      name: farmName,
+      description: `Ферма ${farmName.ru || farmName.en} - производитель свежих продуктов`,
+      location: `Регион ${index + 1}`,
+      rating: (4 + Math.random()).toFixed(1),
+      productsCount: mockProducts.filter(p => JSON.stringify(p.farmName) === farmNameStr).length
+    };
+  });
   
   res.json({
     data: farms,
@@ -265,14 +527,18 @@ app.get('/api/farms', (req, res) => {
 
 app.get('/api/farms/:id', (req, res) => {
   const { id } = req.params;
-  const farms = [...new Set(mockProducts.map(p => p.farmName))].map((farmName, index) => ({
-    id: index + 1,
-    name: farmName,
-    description: `Ферма ${farmName} - производитель свежих продуктов`,
-    location: `Регион ${index + 1}`,
-    rating: (4 + Math.random()).toFixed(1),
-    productsCount: mockProducts.filter(p => p.farmName === farmName).length
-  }));
+  const uniqueFarmNames = [...new Set(mockProducts.map(p => JSON.stringify(p.farmName)))];
+  const farms = uniqueFarmNames.map((farmNameStr, index) => {
+    const farmName = JSON.parse(farmNameStr);
+    return {
+      id: index + 1,
+      name: farmName,
+      description: `Ферма ${farmName.ru || farmName.en} - производитель свежих продуктов`,
+      location: `Регион ${index + 1}`,
+      rating: (4 + Math.random()).toFixed(1),
+      productsCount: mockProducts.filter(p => JSON.stringify(p.farmName) === farmNameStr).length
+    };
+  });
   
   const farm = farms.find(f => f.id === parseInt(id));
   
@@ -285,10 +551,14 @@ app.get('/api/farms/:id', (req, res) => {
 
 app.get('/api/farms/:id/products', (req, res) => {
   const { id } = req.params;
-  const farms = [...new Set(mockProducts.map(p => p.farmName))].map((farmName, index) => ({
-    id: index + 1,
-    name: farmName
-  }));
+  const uniqueFarmNames = [...new Set(mockProducts.map(p => JSON.stringify(p.farmName)))];
+  const farms = uniqueFarmNames.map((farmNameStr, index) => {
+    const farmName = JSON.parse(farmNameStr);
+    return {
+      id: index + 1,
+      name: farmName
+    };
+  });
   
   const farm = farms.find(f => f.id === parseInt(id));
   
@@ -296,7 +566,7 @@ app.get('/api/farms/:id/products', (req, res) => {
     return res.status(404).json({ error: 'Farm not found' });
   }
   
-  const farmProducts = mockProducts.filter(p => p.farmName === farm.name);
+  const farmProducts = mockProducts.filter(p => JSON.stringify(p.farmName) === JSON.stringify(farm.name));
   
   res.json({
     data: farmProducts,
@@ -388,19 +658,54 @@ app.delete('/api/cart', (req, res) => {
   });
 });
 
+// 📊 Статистика пользователей
+app.get('/api/admin/users/stats', (req, res) => {
+  try {
+    const stats = userDB.getUserStats();
+    const allUsers = userDB.getAllUsers().map(user => {
+      const { password, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+    });
+    
+    res.json({
+      message: 'User database statistics',
+      stats,
+      users: allUsers,
+      database: {
+        type: 'JSON File',
+        location: './data/users.json',
+        persistent: true
+      }
+    });
+  } catch (error) {
+    console.error('❌ Error getting user stats:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // 🏠 Health check
 app.get('/', (req, res) => {
   res.json({ 
     message: 'FarmSharing API Server',
     version: '1.0.0',
     endpoints: [
+      // 🔐 Auth endpoints
+      'POST /api/auth/register',
+      'POST /api/auth/login',
+      'GET /api/auth/profile',
+      'PUT /api/auth/profile',
+      'POST /api/auth/forgot-password',
+      'POST /api/auth/logout',
+      // 🛍️ Products endpoints
       'GET /api/products',
       'GET /api/products/:id',
       'GET /api/products/search?q=query',
       'GET /api/products/category/:category',
+      // 🏪 Farms endpoints
       'GET /api/farms',
       'GET /api/farms/:id',
       'GET /api/farms/:id/products',
+      // 🛒 Cart endpoints
       'GET /api/cart',
       'POST /api/cart/add',
       'PUT /api/cart/:itemId',

@@ -1,7 +1,7 @@
 import { createTheme } from '@mui/material/styles';
 
 // Кастомная тема для FarmSharing
-export const theme = createTheme({
+export const lightTheme = createTheme({
   palette: {
     primary: {
       main: '#22c55e', // --color-organic-green
@@ -42,6 +42,7 @@ export const theme = createTheme({
     background: {
       default: '#fefefe', // --color-cream-50
       paper: '#ffffff', // --color-cream-100
+      pagesBackground: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)', // Фон для всех страниц
     },
     divider: 'rgba(100, 116, 139, 0.12)', // --color-border
   },
@@ -188,23 +189,6 @@ export const theme = createTheme({
         },
       },
     },
-    MuiAppBar: {
-      styleOverrides: {
-        root: {
-          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
-          transition: 'all 0.3s ease',
-          zIndex: 1000,
-          '&:hover': {
-            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%)',
-            boxShadow: '0 6px 25px rgba(0, 0, 0, 0.15)',
-          },
-        },
-      },
-    },
     MuiIconButton: {
       styleOverrides: {
         root: {
@@ -330,6 +314,62 @@ declare module '@mui/material/styles' {
       cream: string;
     };
   }
+  interface TypeBackground {
+    pagesBackground?: string;
+  }
 }
 
+// Темная тема
+export const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#32b8c6', // --color-teal-300
+      light: '#5dd5e1',
+      dark: '#1a9ba8',
+      contrastText: '#1e293b',
+    },
+    secondary: {
+      main: '#a7a9a9', // --color-gray-300
+      light: '#c4c6c6',
+      dark: '#8a8c8c',
+      contrastText: '#ffffff',
+    },
+    text: {
+      primary: '#f5f5f5', // --color-gray-200
+      secondary: 'rgba(167, 169, 169, 0.7)',
+    },
+    background: {
+      default: '#1f2121', // --color-charcoal-700
+      paper: '#262828', // --color-charcoal-800
+      pagesBackground: 'linear-gradient(135deg, #1f2121 0%, #262828 100%)', // Фон для всех страниц в темной теме
+    },
+    divider: 'rgba(119, 124, 124, 0.3)',
+  },
+  components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          background: 'rgba(31, 33, 33, 0.8)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+          borderBottom: '1px solid rgba(119, 124, 124, 0.2)',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+          transition: 'all 0.3s ease',
+          zIndex: 1000,
+          color: 'text.primary',
+          top: 0,
+          '&:hover': {
+            background: 'rgba(31, 33, 33, 0.9)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+          },
+        },
+      },
+    },
+  },
+});
+
+// Экспортируем светлую тему как основную
+export const theme = lightTheme;
 export default theme; 

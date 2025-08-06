@@ -2,14 +2,17 @@
 import { Box, Typography, Button, Chip, IconButton, Card, CardContent, CardMedia } from '@mui/material';
 import { Add as AddIcon, Favorite as FavoriteIcon, FavoriteBorder as FavoriteBorderIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { useCart } from '../../../features/cart/model/useCart';
-import type { Product } from '../../../types';
+import { useAppDispatch } from '../../../app/store/store';
+import { addToCart } from '../../../features/cart/model/cartSlice';
+import { useLocalizedData } from '../../../shared/lib/useLocalizedData';
+import type { Product } from '../../../types/api';
 import { getImageUrl, handleImageError } from '../../../utils/imageUtils';
 
 interface ProductCardProps {
     product: Product;
     onAddToCart?: (product: Product) => void;
     onToggleFavorite?: (productId: number) => void;
+    onCardClick?: (product: Product) => void;
     isFavorite?: boolean;
 }
 
@@ -17,17 +20,19 @@ export const ProductCard = ({
     product, 
     onAddToCart, 
     onToggleFavorite, 
+    onCardClick,
     isFavorite = false 
 }: ProductCardProps) => {
     const { t } = useTranslation();
-    const cart = useCart();
+    const { getProductTitle, getProductDescription, getFarmName, getProductUnit } = useLocalizedData();
+    const dispatch = useAppDispatch();
 
     const handleAddToCart = () => {
         if (product.stock === 0) return;
         if (onAddToCart) {
             onAddToCart(product);
         } else {
-            cart.addItem(product, 1);
+            dispatch(addToCart({ product, quantity: 1 }));
         }
     };
 
@@ -35,10 +40,19 @@ export const ProductCard = ({
         onToggleFavorite?.(product.id);
     };
 
+    const handleCardClick = (e: React.MouseEvent) => {
+        // Не открываем модальное окно если клик был по кнопке добавления в корзину
+        if ((e.target as HTMLElement).closest('button')) {
+            return;
+        }
+        onCardClick?.(product);
+    };
+
     const isOutOfStock = product.stock === 0;
 
     return (
         <Card 
+            onClick={handleCardClick}
             sx={{
                 height: '100%',
                 display: 'flex',
@@ -50,6 +64,7 @@ export const ProductCard = ({
                 background: 'white',
                 overflow: 'hidden',
                 opacity: isOutOfStock ? 0.7 : 1,
+                cursor: onCardClick ? 'pointer' : 'default',
                 '&:hover': {
                     transform: isOutOfStock ? 'none' : 'translateY(-4px)',
                     boxShadow: isOutOfStock ? '0 2px 8px rgba(0, 0, 0, 0.1)' : '0 8px 25px rgba(0, 0, 0, 0.15)',
@@ -64,17 +79,21 @@ export const ProductCard = ({
             }}>
                 <CardMedia
                     component="img"
-                    height="180px"
+                    height="180"
+                    width="100%"
                     image={getImageUrl(product.imageUrl || '')}
-                    alt={product.title}
+                    alt={getProductTitle(product)}
                     onError={handleImageError}
+                    loading="lazy"
                     sx={{
                         objectFit: 'cover',
                         width: '100%',
+                        height: '180px',
                         transition: 'transform 0.3s ease',
                         filter: isOutOfStock ? 'grayscale(30%)' : 'none',
+                        // ✅ Оптимизированный hover эффект
                         '&:hover': {
-                            transform: isOutOfStock ? 'none' : 'scale(1.05)',
+                            transform: isOutOfStock ? 'none' : 'scale(1.02)', // Уменьшили масштаб для производительности
                         },
                     }}
                 />
@@ -100,41 +119,19 @@ export const ProductCard = ({
                                 fontWeight: 600,
                                 fontSize: '0.7rem',
                                 height: '20px',
-                                '& .MuiChip-label': {
-                                    px: 1,
-                                }
                             }}
                         />
                     )}
-                    {product.originalPrice && product.originalPrice > product.price && (
+                    {product.discount && (
                         <Chip
-                            label={`-${Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%`}
+                            label={`-${product.discount}%`}
                             size="small"
                             sx={{
                                 backgroundColor: '#ef4444',
                                 color: 'white',
-                                fontWeight: 700,
-                                fontSize: '0.7rem',
-                                height: '20px',
-                                '& .MuiChip-label': {
-                                    px: 1,
-                                }
-                            }}
-                        />
-                    )}
-                    {isOutOfStock && (
-                        <Chip
-                            label={t('product.outOfStock')}
-                            size="small"
-                            sx={{
-                                backgroundColor: '#6b7280',
-                                color: 'white',
                                 fontWeight: 600,
                                 fontSize: '0.7rem',
                                 height: '20px',
-                                '& .MuiChip-label': {
-                                    px: 1,
-                                }
                             }}
                         />
                     )}
@@ -148,44 +145,33 @@ export const ProductCard = ({
                         top: '8px',
                         right: '8px',
                         backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        backdropFilter: 'blur(10px)',
-                        width: '32px',
-                        height: '32px',
+                        color: isFavorite ? '#ef4444' : '#6b7280',
                         '&:hover': {
                             backgroundColor: 'rgba(255, 255, 255, 1)',
-                            transform: 'scale(1.1)',
                         },
                     }}
                 >
-                    {isFavorite ? (
-                        <FavoriteIcon color="error" sx={{ fontSize: '1.1rem' }} />
-                    ) : (
-                        <FavoriteBorderIcon sx={{ fontSize: '1.1rem' }} />
-                    )}
+                    {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                 </IconButton>
             </Box>
 
             {/* 📝 Контент карточки */}
             <CardContent sx={{ 
-                flexGrow: 1, 
+                flex: 1, 
                 display: 'flex', 
-                flexDirection: 'column', 
+                flexDirection: 'column',
                 p: '16px',
-                gap: '8px'
             }}>
-                {/* 🏷️ Название и описание */}
-                <Box>
+                {/* 📝 Название и описание */}
+                <Box sx={{ flex: 1 }}>
                     <Typography 
                         variant="h6" 
                         sx={{ 
                             fontWeight: 600,
-                            fontSize: '1rem',
-                            lineHeight: 1.3,
-                            color: '#1f2937',
                             mb: '4px',
                         }}
                     >
-                        {product.title}
+                        {getProductTitle(product)}
                     </Typography>
                     <Typography 
                         variant="body2" 
@@ -195,7 +181,7 @@ export const ProductCard = ({
                             lineHeight: 1.4,
                         }}
                     >
-                        {product.description}
+                        {getProductDescription(product)}
                     </Typography>
                 </Box>
 
@@ -211,7 +197,7 @@ export const ProductCard = ({
                             gap: '4px'
                         }}
                     >
-                        🏡 {product.farmName}
+                        🏡 {getFarmName(product)}
                     </Typography>
                 </Box>
 
@@ -247,7 +233,7 @@ export const ProductCard = ({
                     )}
                     {product.unit && (
                         <Typography variant="body2" sx={{ color: '#6b7280', fontSize: '0.8rem' }}>
-                                                         {t('product.per')} {product.unit}
+                            {t('product.per')} {getProductUnit(product)}
                         </Typography>
                     )}
                 </Box>

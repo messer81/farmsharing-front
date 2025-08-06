@@ -223,6 +223,9 @@
   --color-earth-brown-light: rgba(140, 107, 71, 0.1);
   --color-accent-orange-light: rgba(249, 115, 22, 0.1);
   --gradient-hero: linear-gradient(135deg, var(--color-charcoal-800) 0%, rgba(34, 197, 94, 0.05) 50%, rgba(249, 115, 22, 0.05) 100%);
+  
+  /* Градиентный фон для темной темы */
+  --color-background: linear-gradient(135deg, #1f2121 0%, #262828 100%);
 }
 
 [data-color-scheme="light"] {
@@ -257,6 +260,9 @@
   --color-hero-overlay: rgba(31, 33, 33, 0.3);
   --color-hero-text: var(--color-gray-200);
   --color-hero-accent: var(--color-organic-green);
+  
+  /* Градиентный фон для светлой темы */
+  --color-background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 }
 
 /* Базовые стили */
@@ -284,11 +290,15 @@ body {
   min-height: 100vh;
   width: 100%;
   overflow-x: hidden;
+  background: var(--color-background);
 }
 
 #root {
   width: 100%;
   min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: var(--color-background);
 }
 
 /* Типографика */
@@ -727,3 +737,35 @@ a:focus {
     color: #000;
   }
 }
+
+/* Глобальные стили для хедера */
+.MuiAppBar-root {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease !important;
+  z-index: 1000 !important;
+  color: var(--color-text) !important;
+  top: 0 !important;
+}
+
+.MuiAppBar-root:hover {
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* Темная тема */
+[data-color-scheme="dark"] .MuiAppBar-root {
+  background: rgba(31, 33, 33, 0.8) !important;
+  border-bottom: 1px solid rgba(119, 124, 124, 0.2) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-color-scheme="dark"] .MuiAppBar-root:hover {
+  background: rgba(31, 33, 33, 0.9) !important;
+}
+
+

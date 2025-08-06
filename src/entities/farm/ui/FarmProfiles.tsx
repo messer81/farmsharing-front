@@ -15,6 +15,7 @@ import {
   Chip
 } from '@mui/material';
 import { useFarmsAll } from '../../../shared/api/useApi';
+import { useLocalizedData } from '../../../shared/lib/useLocalizedData';
 import type { Farm } from '../../../types/api';
 
 interface FarmProfilesProps {
@@ -33,6 +34,7 @@ export const FarmProfiles = ({
   const [farms, setFarms] = useState<Farm[]>(initialFarms || []);
   const [loading, setLoading] = useState(!initialFarms);
   const [error, setError] = useState<string | null>(null);
+  const { getFarmTitle, getFarmDescription } = useLocalizedData();
 
   // Используем стабильный хук для ферм
   const { data, loading: apiLoading, error: apiError, execute: fetchFarms } = useFarmsAll();
@@ -153,8 +155,8 @@ export const FarmProfiles = ({
                   <Box sx={{ mb: { xs: 'var(--space-12)', sm: 'var(--space-16)' } }}>
                     <CardMedia
                       component="img"
-                      src={farm.imageUrl}
-                      alt={farm.name}
+                      src={farm.image}
+                      alt={getFarmTitle(farm)}
                       sx={{
                         width: { xs: 80, sm: 100, md: 120 },
                         height: { xs: 80, sm: 100, md: 120 },
@@ -179,7 +181,7 @@ export const FarmProfiles = ({
                         fontSize: { xs: 'var(--font-size-lg)', sm: 'var(--font-size-xl)' },
                       }}
                     >
-                      {farm.name}
+                      {getFarmTitle(farm)}
                     </Typography>
                     <Typography 
                       variant="body2" 
@@ -200,7 +202,7 @@ export const FarmProfiles = ({
                         mb: 'var(--space-8)',
                       }}
                     >
-                      {farm.description}
+                      {getFarmDescription(farm)}
                     </Typography>
                   </Box>
 

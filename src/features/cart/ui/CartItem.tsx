@@ -4,6 +4,7 @@ import { Delete as DeleteIcon, Add as AddIcon, Remove as RemoveIcon } from '@mui
 import { useDispatch } from 'react-redux';
 import { updateQuantity, removeFromCart } from '../model/cartSlice.ts';
 import { getImageUrl } from '../../../utils/imageUtils';
+import { useLocalizedData } from '../../../shared/lib/useLocalizedData';
 import type { CartItem as CartItemType } from '../../../types';
 
 interface CartItemProps {
@@ -12,13 +13,14 @@ interface CartItemProps {
 
 export const CartItem = ({ item }: CartItemProps) => {
     const dispatch = useDispatch();
+    const { getProductTitle, getFarmName } = useLocalizedData();
     const { product, quantity } = item;
 
     // 🔄 Обработчики изменения количества и удаления
     const handleUpdateQuantity = (newQuantity: number) => {
         if (newQuantity > 0) {
             dispatch(updateQuantity({
-                productId: product.id,
+                id: product.id,
                 quantity: newQuantity
             }));
         } else {
@@ -42,8 +44,8 @@ export const CartItem = ({ item }: CartItemProps) => {
         }}>
             {/* 🖼️ Изображение товара */}
             <Avatar
-                src={getImageUrl(product.imageUrl) || '/placeholder-product.jpg'}
-                alt={product.title}
+                src={getImageUrl(product.imageUrl || '')}
+                alt={getProductTitle(product)}
                 variant="rounded"
                 sx={{
                     width: 70,
@@ -61,7 +63,7 @@ export const CartItem = ({ item }: CartItemProps) => {
                     alignItems: 'flex-start',
                 }}>
                     <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                        {product.title}
+                        {getProductTitle(product)}
                     </Typography>
 
                     <IconButton
@@ -80,7 +82,7 @@ export const CartItem = ({ item }: CartItemProps) => {
                 </Box>
 
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    {product.farmName}
+                    {getFarmName(product)}
                 </Typography>
 
                 <Box sx={{

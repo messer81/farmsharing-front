@@ -5,6 +5,35 @@
     <link rel="icon" type="imageUrl/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FarmSharing</title>
+    
+    <!-- ✅ Resource hints для ускорения загрузки -->
+    <link rel="dns-prefetch" href="//localhost:3000">
+    <link rel="preconnect" href="http://localhost:3000" crossorigin>
+    
+    <!-- ✅ Preload критичных ресурсов -->
+    <link rel="modulepreload" href="/src/main.tsx">
+    <link rel="modulepreload" href="/src/App.tsx">
+    
+    <!-- ✅ Инлайн критический CSS для мгновенного рендеринга -->
+    <style>
+      /* Критический CSS для первоначального рендеринга */
+      *, *::before, *::after { box-sizing: border-box; }
+      body, html { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+      #root { min-height: 100vh; }
+      
+      /* Основные цвета для предотвращения FOUC */
+      :root {
+        --color-primary: #10b981;
+        --color-background: #ffffff;
+        --color-text: #1f2937;
+      }
+      
+      /* Скелет header для предотвращения layout shift */
+      header { height: 80px; background: rgba(255,255,255,0.95); position: sticky; top: 0; z-index: 1000; }
+      
+      /* Основной контейнер */
+      main { min-height: calc(100vh - 160px); } /* Header (80px) + Footer (80px) */
+    </style>
   </head>
   <body>
     <div id="root"></div>

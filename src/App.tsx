@@ -1,33 +1,43 @@
 // 🌟 Главный компонент приложения
 import './App.css'
 import { Routes, Route } from "react-router-dom";
-import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
-import { CssBaseline } from '@mui/material';
-import { Header } from "./widgets/header/ui/Header";
-import HomePage from "./pages/HomePage";
-import ProductsPage from "./pages/ProductsPage";
-import FarmPage from "./pages/FarmPage";
-import DesignSystemPage from "./pages/DesignSystemPage";
-import { ApiDemo } from "./components/ApiDemo";
-import { ThemeProvider } from "./app/providers/ThemeProvider";
-import theme from "./shared/styles/theme";
+// ✅ Lazy loading для ускорения первоначальной загрузки
+import { lazy, Suspense } from 'react';
+import HomePage from "./pages/HomePage"; // Оставляем главную страницу для быстрого LCP
+
+const ProductsPage = lazy(() => import("./pages/ProductsPage"));
+const TestProductsPage = lazy(() => import("./pages/TestProductsPage"));
+const FarmPage = lazy(() => import("./pages/FarmPage"));
+const DesignSystemPage = lazy(() => import("./pages/DesignSystemPage"));
+const ApiDemo = lazy(() => import("./widgets/api-demo/ui/ApiDemo").then(module => ({ default: module.ApiDemo })));
+const AuthCallbackPage = lazy(() => import("./pages/AuthCallbackPage").then(module => ({ default: module.AuthCallbackPage })));
+import { Layout } from "./app/layout/Layout";
 
 function App() {
     return (
-        <MuiThemeProvider theme={theme}>
-            <CssBaseline />
-            <ThemeProvider>
-                <Header />
+        <Layout>
+            <Suspense fallback={
+                <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'center', 
+                    alignItems: 'center', 
+                    minHeight: '50vh' 
+                }}>
+                    Загрузка...
+                </div>
+            }>
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/mockProducts" element={<ProductsPage />} />
+                    <Route path="/test-products" element={<TestProductsPage />} />
                     <Route path="/farm/:id" element={<FarmPage />} />
                     <Route path="/design-system" element={<DesignSystemPage />} />
                     <Route path="/axios-demo" element={<ApiDemo />} />
+                    <Route path="/auth-callback" element={<AuthCallbackPage />} />
                 </Routes>
-            </ThemeProvider>
-        </MuiThemeProvider>
-    )
+            </Suspense>
+        </Layout>
+    );
 }
 
 export default App

@@ -1,13 +1,15 @@
 // 🛒 Redux Toolkit слайс для управления корзиной, добавление/удаление товаров
 // Это мы оставляем и улучшаем
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { CartItem, Product } from '../../../types';
+import type { CartItem, Product } from '../../../types/api';
 
 interface CartState {
     items: CartItem[];
     isOpen: boolean; // Добавим для контроля видимости корзины
     loading: boolean; // Состояние загрузки
     error: string | null; // Состояние ошибки
+    showCheckout: boolean; // Показывать ли страницу оформления заказа
+    authOpen: boolean; // Показывать ли окно авторизации
 }
 
 const initialState: CartState = {
@@ -15,6 +17,8 @@ const initialState: CartState = {
     isOpen: false,
     loading: false,
     error: null,
+    showCheckout: false,
+    authOpen: false,
 };
 
 export const cartSlice = createSlice({
@@ -39,15 +43,15 @@ export const cartSlice = createSlice({
         },
 
         // 🔄 Обновление количества товара
-        updateQuantity: (state, action: PayloadAction<{ productId: number; quantity: number }>) => {
-            const { productId, quantity } = action.payload;
+        updateQuantity: (state, action: PayloadAction<{ id: number; quantity: number }>) => {
+            const { id, quantity } = action.payload;
 
             if (quantity <= 0) {
-                state.items = state.items.filter(item => item.product.id !== productId);
+                state.items = state.items.filter(item => item.product.id !== id);
                 return;
             }
 
-            const item = state.items.find(item => item.product.id === productId);
+            const item = state.items.find(item => item.product.id === id);
             if (item) {
                 item.quantity = quantity;
             }
@@ -69,6 +73,16 @@ export const cartSlice = createSlice({
 
         toggleCart: (state) => {
             state.isOpen = !state.isOpen;
+        },
+
+        // 🛒 Управление оформлением заказа
+        setShowCheckout: (state, action: PayloadAction<boolean>) => {
+            state.showCheckout = action.payload;
+        },
+
+        // 🔐 Управление окном авторизации
+        setAuthOpen: (state, action: PayloadAction<boolean>) => {
+            state.authOpen = action.payload;
         },
 
         // 🔄 API Actions
@@ -99,6 +113,8 @@ export const {
     openCart, 
     closeCart, 
     toggleCart,
+    setShowCheckout,
+    setAuthOpen,
     setCartItems,
     setLoading,
     setError,
@@ -110,6 +126,8 @@ export const selectCartItems = (state: { cart: CartState }) => state.cart.items;
 export const selectCartIsOpen = (state: { cart: CartState }) => state.cart.isOpen;
 export const selectCartLoading = (state: { cart: CartState }) => state.cart.loading;
 export const selectCartError = (state: { cart: CartState }) => state.cart.error;
+export const selectShowCheckout = (state: { cart: CartState }) => state.cart.showCheckout;
+export const selectAuthOpen = (state: { cart: CartState }) => state.cart.authOpen;
 export const selectTotalItems = (state: { cart: CartState }) =>
     state.cart.items.reduce((sum, item) => sum + item.quantity, 0);
 export const selectTotalPrice = (state: { cart: CartState }) =>

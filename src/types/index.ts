@@ -1,40 +1,32 @@
-//  ЕДИНЫЙ файл типов
-    import React from 'react';
+// 🛍️ Типы для продуктов с поддержкой многоязычности
+import type { Product, Farm, CartItem } from './api';
 
-    export interface Farm {
-        phone: string;
-        email: string;
-        description: string;   // Описание фермы
-        products: Product[];   // 📦 Список продуктов на ферме
-        isFavorite?: boolean;  // ❤️ Ферма в избранном
-        isVerified: React.ReactNode;
-        imageUrl?: string;
-        id: number;           // 🆔 ID фермы
-        name: string;         // 📝 Название фермы
-        location: string;     // 📍 Локация
-        city: string;         // 🏙️ Город
-        rating: number;       // ⭐ Рейтинг
-    }
+// Реэкспортируем типы из api.ts для обратной совместимости
+export type { Product, Farm, CartItem };
 
-    export interface Product {
-        id: number;           // 🆔 ID товара
-        title: string;        // 📝 Название
-        description: string;  // 📄 Описание
-        price: number;        // 💰 Цена
-        originalPrice?: number; // 💸 Оригинальная цена (для скидок)
-        imageUrl: string;     // 🖼️ URL картинки
-        category: string;     // 🏷️ Категория
-        farmName: string;     // 🚜 Название фермы
-        rating?: number;      // ⭐ Рейтинг
-        isOrganic: boolean;   // 🌱 Органический продукт
-        unit: string;         // 📏 Единицы измерения (кг, пучок, литр)
-        stock: number;        // 📦 Количество в наличии
-        tags: string[];       // 🏷️ Теги
-        createdAt: string;    // 📅 Дата создания
-        updatedAt: string;    // 📅 Дата обновления
-    }
+// Дополнительные типы для UI
+export interface UIState {
+    theme: 'light' | 'dark';
+    language: 'en' | 'ru' | 'ar' | 'he';
+    sidebarOpen: boolean;
+}
 
-    export interface CartItem { // 🛒 Тип элемента корзины
-        product: Product;     // 🛍️ Информация о продукте
-        quantity: number;     // 🔢 Количество
-    }
+export interface SearchState {
+    query: string;
+    filters: {
+        category: string;
+        priceRange: [number, number];
+        organic: boolean;
+    };
+    results: Product[];
+    loading: boolean;
+}
+
+export interface UserState {
+    id?: number;
+    name?: string;
+    email?: string;
+    isAuthenticated: boolean;
+    loading: boolean;
+    error?: string;
+}
