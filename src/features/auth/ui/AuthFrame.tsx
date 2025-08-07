@@ -1,40 +1,30 @@
 // 🔐 Компонент авторизации с вкладками (вход/регистрация/восстановление)
 import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Tabs, 
-  Tab, 
-  TextField, 
-  Button, 
-  Typography, 
-  Dialog, 
-  DialogContent,
-  Divider,
-  Alert,
-  Checkbox,
-  FormControlLabel,
-  CircularProgress,
-  InputAdornment,
-  IconButton
-} from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import Box from '@mui/material/Box';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import Divider from '@mui/material/Divider';
+import Alert from '@mui/material/Alert';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import CircularProgress from '@mui/material/CircularProgress';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import GoogleLogo from '../../../shared/ui/GoogleLogo';
 import { useAppDispatch, useAppSelector } from '../../../app/store/store';
-import { 
-  loginUser, 
-  registerUser, 
-  forgotPassword, 
-  clearUser, 
-  clearError,
-  loginAsGuest,
-  selectUser,
-  selectIsLoading,
-  selectError,
-  selectIsAuthenticated
-} from '../model/userSlice';
+import { clearUser, loginAsGuest } from '../model/userSlice';
 import { clearCart } from '../../cart/model/cartSlice';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { useGetProfileQuery, useLoginMutation, useRegisterMutation, useForgotPasswordMutation } from '../../../shared/api';
+import { setUserEntity, clearUserEntity } from '../../../entities/user';
 
 interface AuthFrameProps {
   open?: boolean;
@@ -70,34 +60,52 @@ const AuthFrame: React.FC<AuthFrameProps> = ({
 
   // Redux состояние
   const dispatch = useAppDispatch();
-  const user = useAppSelector(selectUser);
-  const isLoading = useAppSelector(selectIsLoading);
-  const error = useAppSelector(selectError);
-  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const user = useAppSelector(state => state.user.user);
   
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  // Очищаем ошибки при смене вкладки
+  // Подгружаем профиль через RTK Query (если есть токен)
+  const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+  const { data: profile } = useGetProfileQuery(undefined, { skip: !token });
+
+  // Синхронизируем доменную сущность user
   useEffect(() => {
-    dispatch(clearError());
+    if (profile) {
+      dispatch(setUserEntity(profile));
+    }
+  }, [profile, dispatch]);
+
+  // Очищаем локальные успехи при смене вкладки
+  useEffect(() => {
     setSuccess('');
-  }, [tab, dispatch]);
+  }, [tab]);
 
   // Обработка успешной авторизации
+  const isAuthenticated = Boolean(user && !user.isGuest);
   useEffect(() => {
-    if (isAuthenticated && user && !user.isGuest) {
+    if (isAuthenticated) {
       onSuccess?.();
     }
-  }, [isAuthenticated, user, onSuccess]);
+  }, [isAuthenticated, onSuccess]);
+
+  const [loginMutation, { isLoading: loginLoading, error: loginError }] = useLoginMutation();
+  const [registerMutation, { isLoading: registerLoading, error: registerError }] = useRegisterMutation();
+  const loginErrorMessage = (loginError as any)?.data?.message || (loginError as any)?.error || '';
+  const registerErrorMessage = (registerError as any)?.data?.message || (registerError as any)?.error || '';
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(clearError());
     setSuccess('');
 
     try {
-      await dispatch(loginUser({ email: loginEmail, password: loginPassword })).unwrap();
+      const res = await loginMutation({ email: loginEmail, password: loginPassword }).unwrap();
+      // Сохраняем токен
+      localStorage.setItem('authToken', res.token);
+      // Опционально: синхронизируем доменную сущность
+      if (res.user) {
+        dispatch(setUserEntity(res.user));
+      }
       
       if (rememberMe) {
         localStorage.setItem('rememberedEmail', loginEmail);
@@ -111,16 +119,19 @@ const AuthFrame: React.FC<AuthFrameProps> = ({
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(clearError());
     setSuccess('');
 
     try {
-      await dispatch(registerUser({ 
+      const res = await registerMutation({ 
         name: regName, 
         email: regEmail, 
         password: regPassword,
         preferredLanguage: 'ru'
-      })).unwrap();
+      }).unwrap();
+      localStorage.setItem('authToken', res.token);
+      if (res.user) {
+        dispatch(setUserEntity(res.user));
+      }
       
       if (rememberMe) {
         localStorage.setItem('rememberedEmail', regEmail);
@@ -136,14 +147,16 @@ const AuthFrame: React.FC<AuthFrameProps> = ({
     window.location.href = 'http://localhost:3000/api/auth/google';
   };
 
+  const [forgotPasswordMutation, { isLoading: forgotLoading, error: forgotError }] = useForgotPasswordMutation();
+  const forgotErrorMessage = (forgotError as any)?.data?.message || (forgotError as any)?.error || '';
+
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(clearError());
     setSuccess('');
     
     try {
-      const result = await dispatch(forgotPassword({ email: resetEmail })).unwrap();
-      setSuccess(result);
+      const result = await forgotPasswordMutation({ email: resetEmail }).unwrap();
+      setSuccess(result.message);
       setResetEmail('');
     } catch (error) {
       // Ошибка обрабатывается в extraReducers
@@ -152,6 +165,7 @@ const AuthFrame: React.FC<AuthFrameProps> = ({
 
   const handleLogout = async () => {
     dispatch(clearUser());
+    dispatch(clearUserEntity());
     dispatch(clearCart()); // Очищаем корзину
   };
 
@@ -215,7 +229,7 @@ const AuthFrame: React.FC<AuthFrameProps> = ({
               fullWidth
               startIcon={<GoogleLogo />}
               onClick={handleGoogleAuth}
-              disabled={isLoading}
+              disabled={loginLoading || registerLoading || forgotLoading}
               sx={{
                 borderColor: '#4285F4',
                 color: '#4285F4',
@@ -254,7 +268,7 @@ const AuthFrame: React.FC<AuthFrameProps> = ({
               variant="text"
               fullWidth
               onClick={handleGuestLogin}
-              disabled={isLoading}
+              disabled={loginLoading || registerLoading || forgotLoading}
               sx={{
                 color: '#666',
                 fontSize: '0.875rem',
@@ -326,17 +340,17 @@ const AuthFrame: React.FC<AuthFrameProps> = ({
                   {t('auth.forgot_password') || 'Забыли пароль?'}
                 </Button>
               </Box>
-              {error && <Alert severity="error" sx={{ mt: 1 }}>{error}</Alert>}
+              {loginErrorMessage && <Alert severity="error" sx={{ mt: 1 }}>{loginErrorMessage}</Alert>}
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
                 fullWidth
                 sx={{ mt: 2 }}
-                disabled={isLoading}
-                startIcon={isLoading ? <CircularProgress size={20} /> : null}
+                disabled={loginLoading}
+                startIcon={loginLoading ? <CircularProgress size={20} /> : null}
               >
-                {isLoading ? (t('auth.loading') || 'Загрузка...') : (t('auth.login') || 'ВОЙТИ')}
+                {loginLoading ? (t('auth.loading') || 'Загрузка...') : (t('auth.login') || 'ВОЙТИ')}
               </Button>
             </form>
           )}
@@ -382,17 +396,17 @@ const AuthFrame: React.FC<AuthFrameProps> = ({
                   ),
                 }}
               />
-              {error && <Alert severity="error" sx={{ mt: 1 }}>{error}</Alert>}
+              {registerErrorMessage && <Alert severity="error" sx={{ mt: 1 }}>{registerErrorMessage}</Alert>}
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
                 fullWidth
                 sx={{ mt: 2 }}
-                disabled={isLoading}
-                startIcon={isLoading ? <CircularProgress size={20} /> : null}
+                disabled={registerLoading}
+                startIcon={registerLoading ? <CircularProgress size={20} /> : null}
               >
-                {isLoading ? (t('auth.loading') || 'Загрузка...') : (t('auth.register') || 'ЗАРЕГИСТРИРОВАТЬСЯ')}
+                {registerLoading ? (t('auth.loading') || 'Загрузка...') : (t('auth.register') || 'ЗАРЕГИСТРИРОВАТЬСЯ')}
               </Button>
             </form>
           )}
@@ -417,7 +431,7 @@ const AuthFrame: React.FC<AuthFrameProps> = ({
                 required
                 sx={{ mb: 2 }}
               />
-              {error && <Alert severity="error" sx={{ mt: 1, mb: 2 }}>{error}</Alert>}
+              {forgotErrorMessage && <Alert severity="error" sx={{ mt: 1, mb: 2 }}>{forgotErrorMessage}</Alert>}
               {success && <Alert severity="success" sx={{ mt: 1, mb: 2 }}>{success}</Alert>}
               <Button
                 type="submit"
@@ -431,10 +445,10 @@ const AuthFrame: React.FC<AuthFrameProps> = ({
                   backgroundColor: '#4CAF50',
                   '&:hover': { backgroundColor: '#2E7D32' }
                 }}
-                disabled={isLoading}
-                startIcon={isLoading ? <CircularProgress size={20} /> : null}
+                disabled={forgotLoading}
+                startIcon={forgotLoading ? <CircularProgress size={20} /> : null}
               >
-                {isLoading ? (t('auth.sending') || 'Отправляем...') : (t('auth.send_reset_link') || 'Отправить ссылку')}
+                {forgotLoading ? (t('auth.sending') || 'Отправляем...') : (t('auth.send_reset_link') || 'Отправить ссылку')}
               </Button>
               <Button
                 variant="text"

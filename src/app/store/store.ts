@@ -7,6 +7,9 @@ import { farmSlice } from '../../entities/farm/model/farmSlice';
 import { searchSlice } from '../../features/search/model/searchSlice';
 import { headerSlice } from '../../widgets/header/model/headerSlice';
 import authReducer from '../../features/auth/model/userSlice';
+import { userReducer } from '../../entities/user';
+import { orderReducer } from '../../entities/order';
+import { baseApi } from '../../shared/api/rtk';
 
 export const store = configureStore({
   reducer: {
@@ -16,7 +19,12 @@ export const store = configureStore({
     search: searchSlice.reducer,
     header: headerSlice.reducer,
     auth: authReducer,
+    user: userReducer,
+    order: orderReducer,
+    [baseApi.reducerPath]: baseApi.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(baseApi.middleware),
 });
 
 export default store;

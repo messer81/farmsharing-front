@@ -2,8 +2,11 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAppDispatch } from '../app/store/store';
-import { setToken, getProfile } from '../features/auth/model/userSlice';
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { setToken } from '../features/auth/model/userSlice';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
+// Профиль подтянется автоматически при первом рендере других экранов с useGetProfileQuery
 
 export const AuthCallbackPage = () => {
   const [searchParams] = useSearchParams();
@@ -25,16 +28,8 @@ export const AuthCallbackPage = () => {
         // Сохраняем токен
         dispatch(setToken(token));
         
-        try {
-          // Получаем данные профиля
-          await dispatch(getProfile()).unwrap();
-          
-          // Перенаправляем на главную
-          navigate('/');
-        } catch (error) {
-          console.error('Failed to get profile:', error);
-          navigate('/');
-        }
+        // Перенаправляем на главную — профиль подтянется на целевом экране
+        navigate('/');
       } else {
         navigate('/');
       }

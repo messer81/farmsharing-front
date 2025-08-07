@@ -1,5 +1,8 @@
 // 🧪 Тестовая страница продуктов для демонстрации корзины
 import { Container, Typography, Grid } from '@mui/material';
+import { useCallback } from 'react';
+import { useAppDispatch } from '../app/store/store';
+import { addToCart } from '../features/cart/model/cartSlice';
 // import { useTranslation } from 'react-i18next';
 import { ProductCard } from '../entities/product/ui/ProductCard';
 import type { Product } from '../types/api';
@@ -153,6 +156,10 @@ const testProducts: Product[] = [
 
 export const TestProductsPage = () => {
     // const { t } = useTranslation();
+    const dispatch = useAppDispatch();
+    const handleAddToCart = useCallback((product: Product) => {
+        dispatch(addToCart({ product, quantity: 1 }));
+    }, [dispatch]);
 
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -187,6 +194,7 @@ export const TestProductsPage = () => {
                     <Grid item xs={12} sm={6} md={3} key={product.id}>
                         <ProductCard 
                             product={product}
+                            onAddToCart={handleAddToCart}
                             onCardClick={(product) => {
                                 console.log('Product clicked:', product);
                             }}

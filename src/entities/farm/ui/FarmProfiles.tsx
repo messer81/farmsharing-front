@@ -1,20 +1,18 @@
 // 👨‍🌾 Профили фермеров для главной страницы
 import { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Grid, 
-  Typography, 
-  Container,
-  CircularProgress,
-  Alert,
-  Button,
-  Card,
-  CardContent,
-  CardMedia,
-  Rating,
-  Chip
-} from '@mui/material';
-import { useFarmsAll } from '../../../shared/api/useApi';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Rating from '@mui/material/Rating';
+import Chip from '@mui/material/Chip';
+import { useGetFarmsQuery } from '../../../shared/api';
 import { useLocalizedData } from '../../../shared/lib/useLocalizedData';
 import type { Farm } from '../../../types/api';
 
@@ -37,12 +35,12 @@ export const FarmProfiles = ({
   const { getFarmTitle, getFarmDescription } = useLocalizedData();
 
   // Используем стабильный хук для ферм
-  const { data, loading: apiLoading, error: apiError, execute: fetchFarms } = useFarmsAll();
+  const { data, isLoading: apiLoading, error: apiError, refetch } = useGetFarmsQuery(undefined, { skip: Boolean(initialFarms) });
 
   // Обновляем состояние при получении данных
   useEffect(() => {
-    if (data?.data) {
-      setFarms(data.data.slice(0, maxFarms));
+    if (Array.isArray(data)) {
+      setFarms(data.slice(0, maxFarms));
     }
   }, [data, maxFarms]);
 
@@ -56,11 +54,7 @@ export const FarmProfiles = ({
   }, [apiError]);
 
   // Загружаем фермы при монтировании компонента (только если не переданы через пропсы)
-  useEffect(() => {
-    if (!initialFarms) {
-      fetchFarms();
-    }
-  }, [fetchFarms, initialFarms]);
+  // RTK Query сам вызывает запрос
 
   // Обновляем фермы при изменении пропсов
   useEffect(() => {
@@ -84,7 +78,7 @@ export const FarmProfiles = ({
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
-        <Button variant="contained" onClick={() => fetchFarms()}>
+        <Button variant="contained" onClick={() => refetch()}>
           Попробовать снова
         </Button>
       </Box>

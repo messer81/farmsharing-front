@@ -19,5 +19,22 @@ export default tseslint.config([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@mui/material',
+              message: 'Импортируйте компоненты адресно, например @mui/material/Button',
+            },
+            {
+              name: '@mui/icons-material',
+              message: 'Импортируйте иконки адресно, например @mui/icons-material/Add',
+            },
+          ],
+        },
+      ],
+    },
   },
 ])

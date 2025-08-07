@@ -1,19 +1,16 @@
 // 🌟 Рекомендуемые продукты для главной страницы
 import { useState, useEffect, useCallback } from 'react';
-import { 
-  Box, 
-  Grid, 
-  Typography, 
-  Container,
-  CircularProgress,
-  Alert,
-  Button,
-  Chip
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
 import { useTranslation } from 'react-i18next';
 import { ProductCard } from './ProductCard';
 import { ProductDetails } from './ProductDetails';
-import { useProductsPaginated } from '../../../shared/api/useApi';
+import { useGetProductsPaginatedQuery } from '../../../shared/api';
 import { CategoryFilter } from '../../../shared/ui/CategoryFilter';
 import type { Product } from '../../../types/api';
 
@@ -22,6 +19,7 @@ interface FeaturedProductsProps {
   title?: string;
   subtitle?: string;
   maxProducts?: number;
+  onAddToCart?: (product: Product) => void;
 }
 
 // Переиспользуемый компонент кнопок категорий теперь в shared/ui/CategoryFilter.tsx
@@ -30,7 +28,8 @@ export const FeaturedProducts = ({
   products: initialProducts, 
   title,
   subtitle,
-  maxProducts = 10 
+  maxProducts = 10,
+  onAddToCart,
 }: FeaturedProductsProps) => {
   const { t } = useTranslation();
   const [products, setProducts] = useState<Product[]>(initialProducts || []);
@@ -42,8 +41,11 @@ export const FeaturedProducts = ({
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Используем стабильный хук для продуктов
-  const { data, loading: apiLoading, error: apiError, execute: fetchProducts } = useProductsPaginated(1, maxProducts);
+  // Используем RTK Query пагинацию (если не переданы initialProducts)
+  const { data, isLoading: apiLoading, error: apiError, refetch } = useGetProductsPaginatedQuery(
+    { page: 1, limit: maxProducts },
+    { skip: Boolean(initialProducts) }
+  );
 
   // Обновляем состояние при получении данных
   useEffect(() => {
@@ -58,15 +60,15 @@ export const FeaturedProducts = ({
   }, [apiLoading]);
 
   useEffect(() => {
-    setError(apiError);
+    if (!apiError) {
+      setError(null);
+      return;
+    }
+    const message = (apiError as any)?.data?.message || (apiError as any)?.error || 'Ошибка загрузки продуктов';
+    setError(message);
   }, [apiError]);
 
-  // Загружаем продукты при монтировании компонента (только если не переданы через пропсы)
-  useEffect(() => {
-    if (!initialProducts) {
-      fetchProducts();
-    }
-  }, [initialProducts, fetchProducts]);
+  // RTK Query сам вызывает запрос при изменении аргументов
 
   // Обновляем продукты при изменении пропсов
   useEffect(() => {
@@ -112,7 +114,7 @@ export const FeaturedProducts = ({
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
-        <Button variant="contained" onClick={() => fetchProducts()}>
+        <Button variant="contained" onClick={() => refetch()}>
           {t('common.tryAgain')}
         </Button>
       </Box>
@@ -167,6 +169,7 @@ export const FeaturedProducts = ({
               <Grid item xs={12} sm={6} md={2.4} key={product.id}>
                 <ProductCard 
                   product={product}
+                  onAddToCart={onAddToCart}
                   onCardClick={handleProductClick}
                   isFavorite={false}
                 />

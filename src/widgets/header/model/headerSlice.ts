@@ -1,5 +1,6 @@
 // 🎯 Redux Toolkit слайс для управления хедером. Управление меню, уведомления, тема, язык
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createSelector } from '@reduxjs/toolkit';
 
 interface HeaderState {
     isMobileMenuOpen: boolean;
@@ -148,8 +149,10 @@ export const selectIsMobileMenuOpen = (state: { header: HeaderState }) => state.
 export const selectIsSearchExpanded = (state: { header: HeaderState }) => state.header.isSearchExpanded;
 export const selectIsUserMenuOpen = (state: { header: HeaderState }) => state.header.isUserMenuOpen;
 export const selectNotifications = (state: { header: HeaderState }) => state.header.notifications;
-export const selectUnreadNotificationsCount = (state: { header: HeaderState }) => 
-    state.header.notifications.filter(n => !n.read).length;
+export const selectUnreadNotificationsCount = createSelector(
+    [selectNotifications],
+    (notifications) => notifications.filter(n => !n.read).length
+);
 export const selectTheme = (state: { header: HeaderState }) => state.header.theme;
 export const selectLanguage = (state: { header: HeaderState }) => state.header.language;
 

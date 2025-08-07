@@ -1,17 +1,16 @@
 // 🛍️ Сетка продуктов с фильтрацией и поиском
 import { useState, useEffect, useCallback } from 'react';
-import { 
-  Grid, 
-  Typography, 
-  Box,
-  Chip,
-  TextField,
-  Pagination,
-  Alert,
-  Skeleton
-} from '@mui/material';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import TextField from '@mui/material/TextField';
+import Pagination from '@mui/material/Pagination';
+import Alert from '@mui/material/Alert';
+import Skeleton from '@mui/material/Skeleton';
 import { Search } from '@mui/icons-material';
-import { useProductsPaginated } from '../../../shared/api/useApi';
+import { useGetProductsPaginatedQuery } from '../../../shared/api';
+import { productApi } from '../model/rtkApi';
 import { useProductFilter } from '../../../shared/lib/useProductFilter';
 import { ProductCard } from './ProductCard';
 import { ProductDetails } from './ProductDetails';
@@ -21,9 +20,10 @@ import type { Product } from '../../../types/api';
 
 interface ProductsGridProps {
   products?: Product[];
+  onAddToCart?: (product: Product) => void;
 }
 
-export const ProductsGrid = ({ products: initialProducts }: ProductsGridProps) => {
+export const ProductsGrid = ({ products: initialProducts, onAddToCart }: ProductsGridProps) => {
   const [allProducts, setAllProducts] = useState<Product[]>(initialProducts || []); // Все продукты для фильтрации
   const [loading, setLoading] = useState(!initialProducts);
   const [error, setError] = useState<string | null>(null);
@@ -43,8 +43,28 @@ export const ProductsGrid = ({ products: initialProducts }: ProductsGridProps) =
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Используем стабильный хук для продуктов
-  const { data, loading: apiLoading, error: apiError, execute: fetchProducts } = useProductsPaginated(page, 8);
+  // Используем RTK Query пагинацию (если не переданы initialProducts)
+  const { data, isLoading: apiLoading, error: apiError } = useGetProductsPaginatedQuery(
+    { page, limit: 8, filters: {
+      category: filters.category !== 'all' ? filters.category : undefined,
+      search: filters.searchQuery || undefined,
+    } },
+    { skip: Boolean(initialProducts) }
+  );
+
+  // Префетч следующей страницы для плавной навигации
+  const prefetchProducts = productApi.usePrefetch('getProductsPaginated');
+  useEffect(() => {
+    if (initialProducts) return;
+    prefetchProducts({
+      page: page + 1,
+      limit: 8,
+      filters: {
+        category: filters.category !== 'all' ? filters.category : undefined,
+        search: filters.searchQuery || undefined,
+      },
+    });
+  }, [page, filters.category, filters.searchQuery, initialProducts, prefetchProducts]);
 
   // Обновляем состояние при получении данных
   useEffect(() => {
@@ -56,19 +76,19 @@ export const ProductsGrid = ({ products: initialProducts }: ProductsGridProps) =
 
   // Обновляем состояние загрузки и ошибок
   useEffect(() => {
-    setLoading(apiLoading);
+    setLoading(Boolean(apiLoading));
   }, [apiLoading]);
 
   useEffect(() => {
-    setError(apiError);
+    if (!apiError) {
+      setError(null);
+      return;
+    }
+    const message = (apiError as any)?.data?.message || (apiError as any)?.error || 'Ошибка загрузки продуктов';
+    setError(message);
   }, [apiError]);
 
-  // Загружаем продукты при изменении страницы (только если не переданы через пропсы)
-  useEffect(() => {
-    if (!initialProducts) {
-      fetchProducts();
-    }
-  }, [page, initialProducts]); // eslint-disable-line react-hooks/exhaustive-deps
+  // RTK Query сам управляет запросом по зависимости { page, limit }
 
   // Обновляем продукты при изменении пропсов
   useEffect(() => {
@@ -202,6 +222,7 @@ export const ProductsGrid = ({ products: initialProducts }: ProductsGridProps) =
               <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
                 <ProductCard 
                   product={product}
+                  onAddToCart={onAddToCart}
                   onCardClick={handleProductClick}
                   isFavorite={false}
                 />

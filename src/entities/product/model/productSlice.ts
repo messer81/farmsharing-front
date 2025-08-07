@@ -1,5 +1,6 @@
 // 🛍️ Redux Toolkit слайс для управления продуктами
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createSelector } from '@reduxjs/toolkit';
 import type { Product } from '../../../types/api';
 
 // Экспортируем тип Product для использования в компонентах
@@ -93,5 +94,25 @@ export const selectSelectedProduct = (state: { product: ProductState }) => state
 export const selectProductLoading = (state: { product: ProductState }) => state.product.loading;
 export const selectProductError = (state: { product: ProductState }) => state.product.error;
 export const selectProductFilters = (state: { product: ProductState }) => state.product.filters;
+
+// Мемоизированный селектор для фильтрованного списка продуктов на основе фильтров стора
+export const selectFilteredProducts = createSelector(
+    [selectProducts, selectProductFilters],
+    (products, filters) => {
+        return products.filter((product) => {
+            if (filters.category !== 'All' && product.category !== filters.category) {
+                return false;
+            }
+            if (filters.organicOnly && !product.isOrganic) {
+                return false;
+            }
+            const [minPrice, maxPrice] = filters.priceRange;
+            if (product.price < minPrice || product.price > maxPrice) {
+                return false;
+            }
+            return true;
+        });
+    }
+);
 
 export default productSlice.reducer; 

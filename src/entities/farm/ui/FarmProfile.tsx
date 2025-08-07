@@ -14,9 +14,10 @@ import type { Product } from '../../../types/api';
 
                      interface FarmProfileProps {
                          farm: Farm;
+                         onAddToCart?: (product: Product) => void;
                      }
 
-                     export const FarmProfile = ({ farm }: FarmProfileProps) => {
+                     export const FarmProfile = ({ farm, onAddToCart }: FarmProfileProps) => {
     const { t } = useTranslation();
     const { getFarmTitle, getFarmDescription } = useLocalizedData();
     const [activeTab, setActiveTab] = useState(0);
@@ -142,8 +143,8 @@ import type { Product } from '../../../types/api';
                                                  <Grid container spacing={3}>
                                                      {farmProducts.map((product) => (
                                                          // ИСПРАВЛЕНО: Удалено свойство 'item'
-                                                         <Grid xs={12} sm={6} md={4} lg={3} key={product.id}>
-                                                             <ProductCard product={product} />
+                                                          <Grid xs={12} sm={6} md={4} lg={3} key={product.id}>
+                                                              <ProductCard product={product} onAddToCart={onAddToCart} />
                                                          </Grid>
                                                      ))}
                                                  </Grid>

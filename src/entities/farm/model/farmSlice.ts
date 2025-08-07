@@ -1,5 +1,6 @@
 // 🚜 Redux Toolkit слайс для управления ферм, фильтрация, выбор фермы
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createSelector } from '@reduxjs/toolkit';
 import type { Farm } from '../../../types';
 
 interface FarmState {
@@ -90,5 +91,23 @@ export const selectSelectedFarm = (state: { farm: FarmState }) => state.farm.sel
 export const selectFarmLoading = (state: { farm: FarmState }) => state.farm.loading;
 export const selectFarmError = (state: { farm: FarmState }) => state.farm.error;
 export const selectFarmFilters = (state: { farm: FarmState }) => state.farm.filters;
+
+export const selectFilteredFarms = createSelector(
+    [selectFarms, selectFarmFilters],
+    (farms, filters) => {
+        return farms.filter((farm) => {
+            if (filters.location !== 'All' && farm.location !== filters.location) {
+                return false;
+            }
+            if (filters.verifiedOnly && !farm.verified) {
+                return false;
+            }
+            if (farm.rating < filters.rating) {
+                return false;
+            }
+            return true;
+        });
+    }
+);
 
 export default farmSlice.reducer; 

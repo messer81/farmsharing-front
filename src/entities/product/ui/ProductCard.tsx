@@ -1,9 +1,14 @@
 // 🛍️ Карточка продукта с адаптивным дизайном
-import { Box, Typography, Button, Chip, IconButton, Card, CardContent, CardMedia } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
 import { Add as AddIcon, Favorite as FavoriteIcon, FavoriteBorder as FavoriteBorderIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { useAppDispatch } from '../../../app/store/store';
-import { addToCart } from '../../../features/cart/model/cartSlice';
 import { useLocalizedData } from '../../../shared/lib/useLocalizedData';
 import type { Product } from '../../../types/api';
 import { getImageUrl, handleImageError } from '../../../utils/imageUtils';
@@ -25,14 +30,11 @@ export const ProductCard = ({
 }: ProductCardProps) => {
     const { t } = useTranslation();
     const { getProductTitle, getProductDescription, getFarmName, getProductUnit } = useLocalizedData();
-    const dispatch = useAppDispatch();
 
     const handleAddToCart = () => {
         if (product.stock === 0) return;
         if (onAddToCart) {
             onAddToCart(product);
-        } else {
-            dispatch(addToCart({ product, quantity: 1 }));
         }
     };
 

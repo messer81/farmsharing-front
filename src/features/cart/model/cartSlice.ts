@@ -1,6 +1,7 @@
 // 🛒 Redux Toolkit слайс для управления корзиной, добавление/удаление товаров
 // Это мы оставляем и улучшаем
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createSelector } from '@reduxjs/toolkit';
 import type { CartItem, Product } from '../../../types/api';
 
 interface CartState {
@@ -128,9 +129,13 @@ export const selectCartLoading = (state: { cart: CartState }) => state.cart.load
 export const selectCartError = (state: { cart: CartState }) => state.cart.error;
 export const selectShowCheckout = (state: { cart: CartState }) => state.cart.showCheckout;
 export const selectAuthOpen = (state: { cart: CartState }) => state.cart.authOpen;
-export const selectTotalItems = (state: { cart: CartState }) =>
-    state.cart.items.reduce((sum, item) => sum + item.quantity, 0);
-export const selectTotalPrice = (state: { cart: CartState }) =>
-    state.cart.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+export const selectTotalItems = createSelector(
+    [(state: { cart: CartState }) => state.cart.items],
+    (items) => items.reduce((sum, item) => sum + item.quantity, 0)
+);
+export const selectTotalPrice = createSelector(
+    [(state: { cart: CartState }) => state.cart.items],
+    (items) => items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0)
+);
 
 export default cartSlice.reducer;

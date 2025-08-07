@@ -1,10 +1,17 @@
 // 🛍️ Страница каталога продуктов с Axios API
-import { Container, Typography, Box, CircularProgress, Alert } from '@mui/material';
-import { useEffect } from 'react';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@mui/material/styles';
 import { ProductsGrid } from '../entities/product/ui/ProductsGrid';
-import { useProductsAll } from '../shared/api/useApi';
+import { useGetProductsQuery } from '../shared/api';
+import { useAppDispatch } from '../app/store/store';
+import { addToCart } from '../features/cart/model/cartSlice';
+import type { Product } from '../types/api';
 // ✅ Используем ОПТИМИЗИРОВАННЫЕ JPEG (НЕ WebP!)
 import heroImageLight from '../assets/optimized/hero-bg-light-desktop.jpg';
 import heroImageDark from '../assets/optimized/hero-bg-dark-desktop.jpg';
@@ -12,19 +19,19 @@ import heroImageDark from '../assets/optimized/hero-bg-dark-desktop.jpg';
 const ProductsPage = () => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const dispatch = useAppDispatch();
 
   // ✅ Выбираем МАЛЕНЬКОЕ оптимизированное изображение по теме
   const heroImage = theme.palette.mode === 'dark' ? heroImageDark : heroImageLight;
 
-  // ✅ УПРОЩЕННАЯ логика - только один источник истины
-  const { data, loading, error, execute: fetchProducts } = useProductsAll();
+  // ✅ RTK Query — единый источник истины по продуктам
+  const { data, isLoading, error: queryError } = useGetProductsQuery();
 
-  // ✅ Загружаем продукты при монтировании - БЕЗ дублирования состояний
-  useEffect(() => {
-    fetchProducts();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const handleAddToCart = useCallback((product: Product) => {
+    dispatch(addToCart({ product, quantity: 1 }));
+  }, [dispatch]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
@@ -34,12 +41,13 @@ const ProductsPage = () => {
     );
   }
 
-  if (error) {
+  if (queryError) {
+    const errorMessage = (queryError as any)?.data?.message || (queryError as any)?.error || 'Не удалось загрузить продукты';
     return (
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <Alert severity="error">
           <Typography variant="h6">{t('common.error')}</Typography>
-          <Typography>{error}</Typography>
+          <Typography>{errorMessage}</Typography>
         </Alert>
       </Container>
     );
@@ -117,7 +125,7 @@ const ProductsPage = () => {
             {t('products.found', { count: data?.data?.length || 0 })}
           </Typography>
         </Box>
-        <ProductsGrid products={data?.data || []} />
+        <ProductsGrid products={data?.data || []} onAddToCart={handleAddToCart} />
       </Container>
     </Box>
   );
