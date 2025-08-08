@@ -235,6 +235,7 @@ npm run lint         # Проверка кода
 ## 📚 Документация
 
 - [API Documentation](./docs/api-documentation.md) - Подробная документация API
+- [Checkout & Payments](./docs/checkout-and-payment.md) - Оформление заказа и оплата (Stripe, сценарии, API)
 - [Map Widget Guide](./docs/map-widget.md) - Руководство по виджету карты (установка, ключи, примеры)
 - [Latest Updates](./docs/latest-updates.md) - Последние обновления
 - [Product Modal Guide](./docs/product-modal-guide.md) - Руководство по модальному окну

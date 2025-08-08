@@ -22,6 +22,8 @@
 
 - `src/shared/styles/theme.ts` — правки `darkTheme`: палитра, типографика, `MuiTypography` и `MuiButton`
 - `src/index.css` — выравнивание CSS‑переменных тёмной темы под брендовый зелёный
+ - `docs/checkout-and-payment.md` — новое подробное руководство по чекауту и оплате
+ - `README.md` — ссылка на руководство по чекауту
 
 ### ✅ Как проверить
 
