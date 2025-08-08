@@ -13,6 +13,7 @@ const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 
 // 📊 Подключаем JSON "базу данных"
 const userDB = require('./data/userDatabase.cjs');
+const farmDB = require('./data/farmDatabase.cjs');
 
 // Mock данные прямо в сервере для простоты
 const mockProducts = [
@@ -435,7 +436,7 @@ app.post('/api/auth/logout', authenticateToken, (req, res) => {
 // 📡 API Routes
 
 // 🛍️ Mock Products endpoint для совместимости
-app.get('/mockProducts', (req, res) => {
+app.get('/products-mock', (req, res) => {
   res.json({
     data: mockProducts,
     total: mockProducts.length,
@@ -505,73 +506,50 @@ app.get('/api/products/category/:category', (req, res) => {
 
 // 🏭 Farms API endpoints
 app.get('/api/farms', (req, res) => {
-  // Создаем уникальные фермы из продуктов
-  const uniqueFarmNames = [...new Set(mockProducts.map(p => JSON.stringify(p.farmName)))];
-  const farms = uniqueFarmNames.map((farmNameStr, index) => {
-    const farmName = JSON.parse(farmNameStr);
-    return {
-      id: index + 1,
-      name: farmName,
-      description: `Ферма ${farmName.ru || farmName.en} - производитель свежих продуктов`,
-      location: `Регион ${index + 1}`,
-      rating: (4 + Math.random()).toFixed(1),
-      productsCount: mockProducts.filter(p => JSON.stringify(p.farmName) === farmNameStr).length
-    };
-  });
-  
-  res.json({
-    data: farms,
-    total: farms.length
-  });
+  const { north, south, east, west, search } = req.query;
+  let farms = farmDB.getAllFarms();
+
+  if ([north, south, east, west].every(v => typeof v !== 'undefined')) {
+    farms = farmDB.getFarmsByBounds({
+      north: parseFloat(north),
+      south: parseFloat(south),
+      east: parseFloat(east),
+      west: parseFloat(west),
+    });
+  }
+
+  if (search) {
+    const q = String(search).toLowerCase();
+    farms = farms.filter(f =>
+      JSON.stringify(f.name).toLowerCase().includes(q) ||
+      String(f.location || '').toLowerCase().includes(q)
+    );
+  }
+
+  res.json({ data: farms, total: farms.length });
 });
 
 app.get('/api/farms/:id', (req, res) => {
   const { id } = req.params;
-  const uniqueFarmNames = [...new Set(mockProducts.map(p => JSON.stringify(p.farmName)))];
-  const farms = uniqueFarmNames.map((farmNameStr, index) => {
-    const farmName = JSON.parse(farmNameStr);
-    return {
-      id: index + 1,
-      name: farmName,
-      description: `Ферма ${farmName.ru || farmName.en} - производитель свежих продуктов`,
-      location: `Регион ${index + 1}`,
-      rating: (4 + Math.random()).toFixed(1),
-      productsCount: mockProducts.filter(p => JSON.stringify(p.farmName) === farmNameStr).length
-    };
-  });
-  
-  const farm = farms.find(f => f.id === parseInt(id));
-  
-  if (!farm) {
-    return res.status(404).json({ error: 'Farm not found' });
-  }
-  
+  const farm = farmDB.getFarmById(id);
+  if (!farm) return res.status(404).json({ error: 'Farm not found' });
   res.json(farm);
 });
 
 app.get('/api/farms/:id/products', (req, res) => {
   const { id } = req.params;
-  const uniqueFarmNames = [...new Set(mockProducts.map(p => JSON.stringify(p.farmName)))];
-  const farms = uniqueFarmNames.map((farmNameStr, index) => {
-    const farmName = JSON.parse(farmNameStr);
-    return {
-      id: index + 1,
-      name: farmName
-    };
-  });
-  
-  const farm = farms.find(f => f.id === parseInt(id));
-  
-  if (!farm) {
-    return res.status(404).json({ error: 'Farm not found' });
+  const farm = farmDB.getFarmById(id);
+  if (!farm) return res.status(404).json({ error: 'Farm not found' });
+
+  // 1) Если в JSON-БД у фермы есть собственный список товаров — отдаем его
+  if (Array.isArray(farm.products) && farm.products.length > 0) {
+    return res.json({ data: farm.products, total: farm.products.length });
   }
-  
-  const farmProducts = mockProducts.filter(p => JSON.stringify(p.farmName) === JSON.stringify(farm.name));
-  
-  res.json({
-    data: farmProducts,
-    total: farmProducts.length
-  });
+
+  // 2) Иначе — совместимость со старыми моками по названию фермы
+  const nameKey = JSON.stringify(farm.name || {});
+  const fallback = mockProducts.filter(p => JSON.stringify(p.farmName || {}) === nameKey);
+  return res.json({ data: fallback, total: fallback.length });
 });
 
 // 🛒 Cart API endpoints

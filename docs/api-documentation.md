@@ -227,32 +227,32 @@ curl "http://localhost:3000/api/products/category/vegetables"
 ## 🏭 Farms API
 
 ### GET /api/farms
-Получение списка всех ферм.
+Получение списка ферм из `data/farms.json`.
+
+Поддерживаемые параметры:
+- `north,south,east,west` — фильтрация по границам карты (bounds)
+- `search` — строка поиска по названию/локации
 
 **Пример запроса:**
 ```bash
-curl "http://localhost:3000/api/farms"
+curl "http://localhost:3000/api/farms?north=33.5&south=31.0&east=35.8&west=34.3"
 ```
 
-**Ответ:**
+**Ответ (пример):**
 ```json
 {
   "data": [
     {
-      "id": 1,
-      "name": {
-        "en": "Galil Farm",
-        "ru": "Ферма Галиль",
-        "ar": "مزرعة الجليل",
-        "he": "חוות הגליל"
-      },
-      "description": "Ферма Ферма Галиль - производитель свежих продуктов",
-      "location": "Регион 1",
-      "rating": 4.8,
-      "productsCount": 2
+      "id": 2,
+      "name": { "en": "Merkaz Farm", "ru": "Мерказ Фарм" },
+      "location": "Tel Aviv",
+      "latitude": 32.0853,
+      "longitude": 34.7818,
+      "rating": 4.6,
+      "image": "/src/assets/Markaz-Farm.png"
     }
   ],
-  "total": 9
+  "total": 1
 }
 ```
 

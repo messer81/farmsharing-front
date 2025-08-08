@@ -120,7 +120,7 @@ export const HeroSection = () => {
                     >
                         <Button
                             component={Link}
-                            to="/mockProducts"
+                           to="/products"
                             variant="contained"
                             size="large"
                             sx={{
@@ -132,7 +132,7 @@ export const HeroSection = () => {
 
                         <Button
                             component={Link}
-                            to="/mockProducts"
+                           to="/products"
                             variant="outlined"
                             size="large"
                             sx={{

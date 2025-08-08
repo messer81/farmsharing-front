@@ -31,4 +31,10 @@ export const ENV = {
 9. Добавьте переменные:
    GOOGLE_CLIENT_ID=your-client-id
    GOOGLE_CLIENT_SECRET=your-client-secret
+   
+   # Ключ для Google Maps (Frontend, Vite)
+   VITE_GOOGLE_MAPS_API_KEY=your-google-maps-api-key
+   # Необязательно, но рекомендуется для Advanced Markers и стилей
+   # Создайте карту в Google Cloud Console → Maps → Map IDs, вставьте сюда ID
+   VITE_GOOGLE_MAPS_MAP_ID=your-map-id
 */

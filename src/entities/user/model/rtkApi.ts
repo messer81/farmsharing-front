@@ -6,6 +6,7 @@ export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getProfile: builder.query<User, void>({
       query: () => ({ url: '/auth/profile' }),
+      transformResponse: (response: { user: User }) => response.user,
       providesTags: ['User'],
       async onQueryStarted(_, { queryFulfilled }) {
         try {

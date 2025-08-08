@@ -20,7 +20,6 @@ import { CartButton } from '../../../features/cart/ui/CartButton';
 import { UserMenu } from './UserMenu';
 import AuthFrame from '../../../features/auth/ui/AuthFrame';
 import { useAppSelector } from '../../../app/store/store';
-import { selectUser, selectIsAuthenticated } from '../../../features/auth/model/userSlice';
 
 export const Header = () => {
     const { t } = useTranslation();
@@ -35,8 +34,8 @@ export const Header = () => {
     const [authModalOpen, setAuthModalOpen] = useState(false);
     
     // Redux состояние
-    const user = useAppSelector(selectUser);
-    const isAuthenticated = useAppSelector(selectIsAuthenticated);
+    const userEntity = useAppSelector((state) => state.user.user);
+    const isLoggedIn = Boolean(userEntity);
 
     // Мемоизированные обработчики
     const handleSearchToggle = useCallback(() => {
@@ -58,10 +57,10 @@ export const Header = () => {
     }, []);
 
     const handleUserClick = useCallback(() => {
-        if (!isAuthenticated) {
+        if (!isLoggedIn) {
             setAuthModalOpen(true);
         }
-    }, [isAuthenticated]);
+    }, [isLoggedIn]);
 
     const handleAuthModalClose = useCallback(() => {
         setAuthModalOpen(false);
@@ -123,7 +122,7 @@ export const Header = () => {
                     <CartButton />
 
                     {/* 👤 Пользователь */}
-                    {isAuthenticated ? (
+                    {isLoggedIn ? (
                         <UserMenu />
                     ) : (
                         <IconButton

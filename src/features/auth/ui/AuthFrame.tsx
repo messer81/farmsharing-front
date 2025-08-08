@@ -82,7 +82,7 @@ const AuthFrame: React.FC<AuthFrameProps> = ({
   }, [tab]);
 
   // Обработка успешной авторизации
-  const isAuthenticated = Boolean(user && !user.isGuest);
+  const isAuthenticated = Boolean(user); // доменная сущность user
   useEffect(() => {
     if (isAuthenticated) {
       onSuccess?.();
@@ -485,7 +485,7 @@ const AuthFrame: React.FC<AuthFrameProps> = ({
         </Button>
         <Button variant="contained" color="primary" onClick={() => { 
           if (onClose) onClose(); 
-          navigate('/mockProducts'); 
+          navigate('/products'); 
         }}>
           {t('auth.to_shop') || 'В магазин'}
         </Button>

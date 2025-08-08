@@ -4,9 +4,17 @@ import { useTranslation } from 'react-i18next';
 import { HeroSection } from '../widgets/hero/ui/HeroSection';
 import { FeaturedProducts } from '../entities/product/ui/FeaturedProducts';
 import { FarmProfiles } from '../entities/farm/ui/FarmProfiles';
+import { FarmMap } from '../widgets/map/ui/FarmMap';
+import { useCart } from '../features/cart/model/useCart';
+import type { Product } from '../types/api';
 
 export const HomePage = () => {
     const { t } = useTranslation();
+    const cart = useCart();
+
+    const handleAddToCart = (product: Product) => {
+        cart.addItem(product, 1);
+    };
 
     return (
         <Box>
@@ -14,10 +22,13 @@ export const HomePage = () => {
             <HeroSection />
 
             {/* 🛍️ Рекомендуемые продукты */}
-            <FeaturedProducts />
+            <FeaturedProducts onAddToCart={handleAddToCart} />
 
             {/* 👨‍🌾 Профили фермеров */}
             <FarmProfiles />
+
+            {/* 🗺️ Карта ферм */}
+            <FarmMap />
 
             {/* 🌿 Преимущества */}
             <Container maxWidth={false} sx={{ py: { xs: 'var(--space-16)', sm: 'var(--space-24)', md: 'var(--space-32)' }, width: '100%' }}>

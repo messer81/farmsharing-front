@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": { "en": "Golan Farm", "ru": "Голан Фарм", "ar": "مزرعة الجولان", "he": "חוות הגולן" },
+    "description": { "en": "Family farm in Kiryat Shmona area", "ru": "Семейная ферма в районе Кирьят-Шмона", "ar": "مزرعة عائلية في منطقة كريات شمونة", "he": "חווה משפחתית באזור קרית שמונה" },
+    "location": "Kiryat Shmona",
+    "latitude": 33.2084,
+    "longitude": 35.5722,
+    "verified": true,
+    "rating": 4.7,
+    "products": [],
+    "image": "/src/assets/Golan-Farm.png",
+    "contact": { "phone": "+972-4-0000001", "email": "golan@example.com" }
+  },
+  {
+    "id": 2,
+    "name": { "en": "Merkaz Farm", "ru": "Мерказ Фарм", "ar": "مزرعة מרכז", "he": "חוות מרכז" },
+    "description": { "en": "Urban farm in Tel Aviv", "ru": "Городская ферма в Тель-Авиве", "ar": "مزرعة حضرية في تل أبيב", "he": "חווה עירונית בתל אביב" },
+    "location": "Tel Aviv",
+    "latitude": 32.0853,
+    "longitude": 34.7818,
+    "verified": true,
+    "rating": 4.6,
+    "products": [],
+    "image": "/src/assets/Markaz-Farm.png",
+    "contact": { "phone": "+972-3-0000002", "email": "merkaz@example.com" }
+  },
+  {
+    "id": 3,
+    "name": { "en": "Darom Farm", "ru": "Даром Фарм", "ar": "مزرعة דרום", "he": "חוות דרום" },
+    "description": { "en": "Desert farm near Dimona", "ru": "Пустынная ферма возле Димоны", "ar": "مزرعة صحراوية قرب דימונה", "he": "חווה מדברית ליד דימונה" },
+    "location": "Dimona",
+    "latitude": 31.0700,
+    "longitude": 35.0330,
+    "verified": false,
+    "rating": 4.4,
+    "products": [],
+    "image": "/src/assets/Darom-Farm.png",
+    "contact": { "phone": "+972-8-0000003", "email": "darom@example.com" }
+  }
+]
+

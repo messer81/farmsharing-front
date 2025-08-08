@@ -18,8 +18,9 @@ import {
   Settings as SettingsIcon
 } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../../../app/store/store';
-import { clearUser, selectUser, selectIsAuthenticated } from '../../../features/auth/model/userSlice';
+import { clearUser } from '../../../features/auth/model/userSlice';
 import { clearCart } from '../../../features/cart/model/cartSlice';
+import { clearUserEntity } from '../../../entities/user';
 import { useTranslation } from 'react-i18next';
 
 export const UserMenu = () => {
@@ -27,8 +28,8 @@ export const UserMenu = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   
-  const user = useAppSelector(selectUser);
-  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const user = useAppSelector((state) => state.user.user);
+  const isAuthenticated = Boolean(user);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -40,6 +41,7 @@ export const UserMenu = () => {
 
   const handleLogout = () => {
     dispatch(clearUser());
+    dispatch(clearUserEntity());
     dispatch(clearCart());
     handleMenuClose();
   };
@@ -93,11 +95,13 @@ export const UserMenu = () => {
         {/* 👤 Информация о пользователе */}
         <Box sx={{ px: 2, py: 1.5, borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-            {user.name || 'Пользователь'}
+            {user.name?.trim() || user.email || 'User'}
           </Typography>
-          <Typography variant="caption" color="text.disabled">
-            {user.email}
-          </Typography>
+          {user.email && (
+            <Typography variant="caption" color="text.disabled">
+              {user.email}
+            </Typography>
+          )}
         </Box>
 
         {/* 📋 История заказов */}

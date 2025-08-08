@@ -67,6 +67,9 @@ export interface Farm {
         he: string;
     };
     location: string;
+    // Геокоординаты фермы (опционально, но рекомендуются для карты)
+    latitude?: number;
+    longitude?: number;
     verified: boolean;
     rating: number;
     products: Product[];

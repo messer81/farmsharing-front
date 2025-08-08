@@ -50,7 +50,19 @@ export const FarmProfiles = ({
   }, [apiLoading]);
 
   useEffect(() => {
-    setError(apiError);
+    if (!apiError) {
+      setError(null);
+      return;
+    }
+    if ('status' in apiError) {
+      const msg =
+        typeof (apiError as any).data === 'string'
+          ? (apiError as any).data
+          : (apiError as any).data?.message || `HTTP ${String((apiError as any).status)}`;
+      setError(msg);
+    } else {
+      setError((apiError as any).message ?? 'Unknown error');
+    }
   }, [apiError]);
 
   // Загружаем фермы при монтировании компонента (только если не переданы через пропсы)
