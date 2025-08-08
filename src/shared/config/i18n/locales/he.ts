@@ -10,6 +10,9 @@ export default {
         home: 'בית',
         profile: 'פרופיל',
         admin: 'לוח בקרה',
+        orderHistory: 'היסטוריית הזמנות',
+        settings: 'הגדרות',
+        logout: 'התנתק',
     },
     main: {
         title: 'מהחווה לשולחן',
@@ -78,6 +81,7 @@ export default {
         verified: 'חווה מאומתת',
         noDescription: 'אין תיאור זמין',
         contact: 'צור קשר',
+        loadError: 'טעינת החווה נכשלה',
         tabs: {
             products: 'מוצרים',
             about: 'אודות',
@@ -88,6 +92,21 @@ export default {
         aboutUs: 'אודותינו',
         reviews: 'ביקורות',
         noReviews: 'אין ביקורות עדיין',
+    },
+    map: {
+        title: 'מפת חוות',
+        missingApiKey: 'חסר VITE_GOOGLE_MAPS_API_KEY בקובץ .env',
+        openFarm: 'פתח חווה',
+        loadError: 'נכשל בטעינת חוות',
+        farmImageAlt: 'תמונה של {{name}}',
+    },
+    farms: {
+        title: 'הכירו את החקלאים שלנו',
+        subtitle: 'הכירו את החקלאים שמגדלים את המזון שלכם במסירות.',
+        organicCertified: '🌱 אורגני מוסמך',
+        visitMore: 'צפה בעוד כאן',
+        emptyTitle: 'אין חקלאים זמינים',
+        emptySubtitle: 'חזרו מאוחר יותר להכיר את החקלאים שלנו',
     },
     cart: {
         title: 'עגלת קניות',

@@ -1,4 +1,5 @@
 // 🛍️ Карточка продукта с адаптивным дизайном
+import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -21,7 +22,7 @@ interface ProductCardProps {
     isFavorite?: boolean;
 }
 
-export const ProductCard = ({ 
+const ProductCardComponent = ({ 
     product, 
     onAddToCart, 
     onToggleFavorite, 
@@ -116,8 +117,8 @@ export const ProductCard = ({
                             label={t('product.organic')}
                             size="small"
                             sx={{
-                                backgroundColor: '#22c55e',
-                                color: 'white',
+                                backgroundColor: 'primary.main',
+                                color: 'primary.contrastText',
                                 fontWeight: 600,
                                 fontSize: '0.7rem',
                                 height: '20px',
@@ -129,8 +130,8 @@ export const ProductCard = ({
                             label={`-${product.discount}%`}
                             size="small"
                             sx={{
-                                backgroundColor: '#ef4444',
-                                color: 'white',
+                                backgroundColor: 'error.main',
+                                color: 'error.contrastText',
                                 fontWeight: 600,
                                 fontSize: '0.7rem',
                                 height: '20px',
@@ -142,12 +143,12 @@ export const ProductCard = ({
                 {/* ❤️ Кнопка избранного */}
                 <IconButton
                     onClick={handleToggleFavorite}
-                    sx={{
+                        sx={{
                         position: 'absolute',
                         top: '8px',
                         right: '8px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        color: isFavorite ? '#ef4444' : '#6b7280',
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            color: isFavorite ? 'error.main' : 'text.secondary',
                         '&:hover': {
                             backgroundColor: 'rgba(255, 255, 255, 1)',
                         },
@@ -215,7 +216,7 @@ export const ProductCard = ({
                         variant="h6" 
                         sx={{ 
                             fontWeight: 700,
-                            color: '#22c55e',
+                            color: 'primary.main',
                             fontSize: '1.1rem',
                         }}
                     >
@@ -248,19 +249,19 @@ export const ProductCard = ({
                     fullWidth
                     disabled={isOutOfStock}
                     sx={{
-                        backgroundColor: isOutOfStock ? '#6b7280' : '#22c55e',
-                        color: 'white',
+                        backgroundColor: isOutOfStock ? 'grey.600' : 'primary.main',
+                        color: 'primary.contrastText',
                         py: '8px',
                         fontSize: '0.85rem',
                         fontWeight: 600,
                         borderRadius: '8px',
                         textTransform: 'none',
                         '&:hover': {
-                            backgroundColor: isOutOfStock ? '#6b7280' : '#16a34a',
+                            backgroundColor: isOutOfStock ? 'grey.600' : 'primary.dark',
                         },
                         '&:disabled': {
-                            backgroundColor: '#6b7280',
-                            color: 'white',
+                            backgroundColor: 'grey.600',
+                            color: 'common.white',
                         }
                     }}
                 >
@@ -270,3 +271,6 @@ export const ProductCard = ({
         </Card>
     );
 };
+
+export const ProductCard = React.memo(ProductCardComponent);
+ProductCard.displayName = 'ProductCard';

@@ -5,8 +5,10 @@ import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useParams } from 'react-router-dom';
 import { useGetFarmByIdQuery } from '../shared/api';
+import { useTranslation } from 'react-i18next';
 
 const FarmPage = () => {
+    const { t } = useTranslation();
     const theme = useTheme();
     const params = useParams();
     const farmId = Number(params.id) || 1;
@@ -27,7 +29,7 @@ const FarmPage = () => {
                   </Box>
                 )}
                 {error && (
-                  <Typography color="error">Не удалось загрузить ферму</Typography>
+                  <Typography color="error">{t('farm.loadError')}</Typography>
                 )}
                 {farm && <FarmProfile farm={farm} />}
             </div>

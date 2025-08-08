@@ -14,6 +14,7 @@ import Rating from '@mui/material/Rating';
 import Chip from '@mui/material/Chip';
 import { useGetFarmsQuery } from '../../../shared/api';
 import { useLocalizedData } from '../../../shared/lib/useLocalizedData';
+import { useTranslation } from 'react-i18next';
 import type { Farm } from '../../../types/api';
 
 interface FarmProfilesProps {
@@ -25,10 +26,11 @@ interface FarmProfilesProps {
 
 export const FarmProfiles = ({ 
   farms: initialFarms, 
-  title = "Meet Our Farmers",
-  subtitle = "Get to know the dedicated farmers who grow your food with care and passion.",
+  title,
+  subtitle,
   maxFarms = 3 
 }: FarmProfilesProps) => {
+  const { t } = useTranslation();
   const [farms, setFarms] = useState<Farm[]>(initialFarms || []);
   const [loading, setLoading] = useState(!initialFarms);
   const [error, setError] = useState<string | null>(null);
@@ -91,7 +93,7 @@ export const FarmProfiles = ({
           {error}
         </Alert>
         <Button variant="contained" onClick={() => refetch()}>
-          Попробовать снова
+          {t('common.tryAgain')}
         </Button>
       </Box>
     );
@@ -114,7 +116,7 @@ export const FarmProfiles = ({
             lineHeight: 'var(--line-height-tight)',
           }}
         >
-          {title}
+          {title || t('farms.title')}
         </Typography>
         <Typography
           sx={{
@@ -125,7 +127,7 @@ export const FarmProfiles = ({
             mx: 'auto',
           }}
         >
-          {subtitle}
+          {subtitle || t('farms.subtitle')}
         </Typography>
       </Box>
 
@@ -230,7 +232,7 @@ export const FarmProfiles = ({
                   {/* 🏷️ Сертификация */}
                   <Box sx={{ mb: { xs: 'var(--space-12)', sm: 'var(--space-16)' } }}>
                     <Chip
-                      label="🌱 Organic Certified"
+                      label={t('farms.organicCertified')}
                       size="small"
                       color="success"
                       sx={{
@@ -260,7 +262,7 @@ export const FarmProfiles = ({
                       }
                     }}
                   >
-                    Visit More Here
+                    {t('farms.visitMore')}
                   </Button>
                 </CardContent>
               </Card>
@@ -270,10 +272,10 @@ export const FarmProfiles = ({
       ) : (
         <Box sx={{ textAlign: 'center', py: 8 }}>
           <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
-            No farmers available
+            {t('farms.emptyTitle')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Check back later to meet our dedicated farmers
+            {t('farms.emptySubtitle')}
           </Typography>
         </Box>
       )}

@@ -1,5 +1,5 @@
 // 🌟 Рекомендуемые продукты для главной страницы
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -79,9 +79,11 @@ export const FeaturedProducts = ({
   }, [initialProducts, maxProducts]);
 
   // Фильтрация продуктов по категории
-  const filteredProducts = selectedCategory === 'all' 
-    ? products 
-    : products.filter(product => product.category.toLowerCase() === selectedCategory);
+  const filteredProducts = useMemo(() => (
+    selectedCategory === 'all'
+      ? products
+      : products.filter(product => product.category.toLowerCase() === selectedCategory)
+  ), [products, selectedCategory]);
 
 
 

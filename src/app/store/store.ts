@@ -5,7 +5,7 @@ import { cartSlice } from '../../features/cart/model/cartSlice';
 import { productSlice } from '../../entities/product/model/productSlice';
 import { farmSlice } from '../../entities/farm/model/farmSlice';
 import { searchSlice } from '../../features/search/model/searchSlice';
-import { headerSlice } from '../../widgets/header/model/headerSlice';
+import { headerReducer } from '../../features/header';
 import authReducer from '../../features/auth/model/userSlice';
 import { userReducer } from '../../entities/user';
 import { orderReducer } from '../../entities/order';
@@ -17,7 +17,7 @@ export const store = configureStore({
     product: productSlice.reducer,
     farm: farmSlice.reducer,
     search: searchSlice.reducer,
-    header: headerSlice.reducer,
+    header: headerReducer,
     auth: authReducer,
     user: userReducer,
     order: orderReducer,

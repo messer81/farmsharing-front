@@ -126,7 +126,7 @@ import type { Product } from '../../../types/api';
                                          scrollButtons="auto"
                                          allowScrollButtonsMobile
                                      >
-                                         <Tab label={t('farm.tabs.mockProducts')} />
+                                          <Tab label={t('farm.tabs.products')} />
                                          <Tab label={t('farm.tabs.about')} />
                                          <Tab label={t('farm.tabs.reviews')} />
                                      </Tabs>
@@ -136,7 +136,7 @@ import type { Product } from '../../../types/api';
                                      {activeTab === 0 && (
                                          <>
                                              <Typography variant="h5" sx={{ mb: 3 }}>
-                                                 {t('farm.mockProducts')}
+                                                  {t('farm.products')}
                                              </Typography>
 
                                              {farmProducts.length > 0 ? (

@@ -7,6 +7,7 @@ import { GoogleMap, InfoWindowF as InfoWindow, useJsApiLoader } from '@react-goo
 import { Link as RouterLink } from 'react-router-dom';
 import { useGetFarmsByBoundsQuery } from '../../../entities/farm/model/rtkApi';
 import type { Farm } from '../../../types/api';
+import { useTranslation } from 'react-i18next';
 
 type MapBounds = { n: number; s: number; e: number; w: number } | undefined;
 
@@ -18,6 +19,7 @@ const DEFAULT_ZOOM = 8;
 const MAP_LIBRARIES = ['marker'] as const;
 
 export const FarmMap: React.FC = () => {
+  const { t } = useTranslation();
   const apiKey = (import.meta as any).env?.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
   const mapId = (import.meta as any).env?.VITE_GOOGLE_MAPS_MAP_ID as string | undefined;
 
@@ -90,12 +92,12 @@ export const FarmMap: React.FC = () => {
   return (
     <Box sx={{ width: '100%', my: { xs: 2, md: 4 } }}>
       <Typography variant="h4" textAlign="center" sx={{ mb: { xs: 1, md: 2 } }}>
-        Farms Map
+        {t('map.title')}
       </Typography>
 
       {!apiKey ? (
         <Typography color="error" textAlign="center">
-          Missing VITE_GOOGLE_MAPS_API_KEY in .env
+          {t('map.missingApiKey')}
         </Typography>
       ) : !isLoaded ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
@@ -120,7 +122,11 @@ export const FarmMap: React.FC = () => {
                   <Box sx={{ p: 0.5, minWidth: 220 }}>
                     {f.image && (
                       <Box sx={{ mb: 1, borderRadius: 1, overflow: 'hidden' }}>
-                        <img src={f.image} alt={(typeof f.name === 'object' ? (f.name.ru || f.name.en) : String(f.name)) + ' image'} style={{ width: '100%', height: 120, objectFit: 'cover' }} />
+                        <img
+                          src={f.image}
+                          alt={t('map.farmImageAlt', { name: typeof f.name === 'object' ? (f.name.ru || f.name.en) : String(f.name) })}
+                          style={{ width: '100%', height: 120, objectFit: 'cover' }}
+                        />
                       </Box>
                     )}
                     <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
@@ -140,7 +146,7 @@ export const FarmMap: React.FC = () => {
                         size="small"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        Открыть ферму
+                        {t('map.openFarm')}
                       </Button>
                     </Box>
                   </Box>
@@ -153,7 +159,7 @@ export const FarmMap: React.FC = () => {
 
       {isError && (
         <Typography color="error" textAlign="center" sx={{ mt: 1 }}>
-          Failed to load farms
+          {t('map.loadError')}
         </Typography>
       )}
 

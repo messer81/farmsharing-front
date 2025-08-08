@@ -81,6 +81,7 @@ export default {
         verified: 'Verified Farm',
         noDescription: 'No description available',
         contact: 'Contact',
+        loadError: 'Failed to load farm',
         tabs: {
             products: 'Products',
             about: 'About',
@@ -91,6 +92,21 @@ export default {
         aboutUs: 'About Us',
         reviews: 'Reviews',
         noReviews: 'No reviews yet',
+    },
+    map: {
+        title: 'Farms Map',
+        missingApiKey: 'Missing VITE_GOOGLE_MAPS_API_KEY in .env',
+        openFarm: 'Open farm',
+        loadError: 'Failed to load farms',
+        farmImageAlt: '{{name}} image',
+    },
+    farms: {
+        title: 'Meet Our Farmers',
+        subtitle: 'Get to know the dedicated farmers who grow your food with care and passion.',
+        organicCertified: '🌱 Organic Certified',
+        visitMore: 'Visit More Here',
+        emptyTitle: 'No farmers available',
+        emptySubtitle: 'Check back later to meet our dedicated farmers',
     },
     cart: {
         title: 'Cart',
