@@ -31,6 +31,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { getImageUrl } from '../../../utils/imageUtils';
 import { useLocalizedData } from '../../../shared/lib/useLocalizedData';
+import CheckoutPage from '../../checkout/ui/CheckoutPage';
 
 const CartDrawer: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -86,10 +87,14 @@ const CartDrawer: React.FC = () => {
       /> */}
       <Box sx={{ width: showCheckout ? '100%' : 400, height: '100%' }}>
         {showCheckout ? (
-          // TODO: Добавить CheckoutPage компонент
           <Box sx={{ p: 2 }}>
-            <Typography variant="h6">Оформление заказа</Typography>
-            <Button onClick={handleCloseCheckout}>Назад к корзине</Button>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <IconButton onClick={handleCloseCheckout} sx={{ mr: 1 }}>
+                <Close />
+              </IconButton>
+              <Typography variant="h6">🛒 {t('cart.checkout')}</Typography>
+            </Box>
+            <CheckoutPage />
           </Box>
         ) : (
           <Box sx={{ p: 2 }}>

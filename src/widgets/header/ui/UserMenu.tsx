@@ -22,11 +22,13 @@ import { clearUser } from '../../../features/auth/model/userSlice';
 import { clearCart } from '../../../features/cart/model/cartSlice';
 import { clearUserEntity } from '../../../entities/user';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 export const UserMenu = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   
   const user = useAppSelector((state) => state.user.user);
   const isAuthenticated = Boolean(user);
@@ -47,8 +49,7 @@ export const UserMenu = () => {
   };
 
   const handleOrderHistory = () => {
-    // TODO: Переход к истории заказов
-    console.log('Переход к истории заказов');
+    navigate('/orders');
     handleMenuClose();
   };
 

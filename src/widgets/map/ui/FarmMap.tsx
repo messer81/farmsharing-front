@@ -91,9 +91,7 @@ export const FarmMap: React.FC = () => {
 
   return (
     <Box sx={{ width: '100%', my: { xs: 2, md: 4 } }}>
-      <Typography variant="h4" textAlign="center" sx={{ mb: { xs: 1, md: 2 } }}>
-        {t('map.title')}
-      </Typography>
+      <Typography variant={"sectionTitle" as any}>{t('map.title')}</Typography>
 
       {!apiKey ? (
         <Typography color="error" textAlign="center">

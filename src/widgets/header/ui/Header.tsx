@@ -86,7 +86,7 @@ export const Header = () => {
                         }}
                     >
                         <Typography
-                            variant="h6"
+                            variant="h3"
                             className="header-logo"
                         >
                             🌾 FarmSharing

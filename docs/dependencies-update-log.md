@@ -2,6 +2,40 @@
 
 ## Январь 2025
 
+### ✅ Добавлено: Stripe для оплаты (client + server)
+– Установлены пакеты:
+- `@stripe/stripe-js` (frontend SDK)
+- `@stripe/react-stripe-js` (React Elements)
+- `stripe` (server SDK)
+
+– Проблема при установке (и решение):
+- Ошибка `ETARGET/ERESOLVE` из‑за несовместимых/отсутствующих версий `@stripe/stripe-js` и конфликтов peer deps
+- Решение:
+  1) Зафиксировать совместимые версии в `package.json`:
+     - `@stripe/stripe-js`: ^4.0.0
+     - `@stripe/react-stripe-js`: ^2.9.0
+  2) Выполнить установку с ослаблением проверки peer deps:
+     ```bash
+     npm i --legacy-peer-deps
+     ```
+  3) Альтернатива без `--legacy-peer-deps`: обновить `@types/node` до `^20.19.0` (требование `vite@7`), затем `npm i`.
+
+– Конфигурация окружения (.env):
+```env
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_xxx   # фронтенд (Vite)
+STRIPE_SECRET_KEY=sk_test_xxx             # бекенд (server.cjs)
+# STRIPE_WEBHOOK_SECRET=whsec_xxx         # опционально, если используем вебхуки
+```
+
+– Серверный эндпоинт:
+```
+POST /api/payments/create-intent
+body: { amount: number, currency?: string = 'ils' }
+resp: { clientSecret: string }
+```
+
+– Клиентское использование: Stripe Elements → подтверждение платежа → создание заказа.
+
 ### ✅ **Добавлено: `react-country-flag@3.1.0`**
 **Цель:** Замена эмодзи флагов на настоящие SVG иконки
 

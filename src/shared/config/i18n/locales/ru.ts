@@ -115,6 +115,27 @@ export default {
         close: 'Закрыть',
         proceed_to_checkout: 'ОФОРМИТЬ ЗАКАЗ',
     },
+    // Чек-аут
+    checkout: 'Оформление заказа',
+    delivery_address: 'Адрес доставки',
+    payment_method: 'Способ оплаты',
+    order_summary: 'Сводка заказа',
+    order_confirmed: 'Заказ подтверждён',
+    order_confirmed_message: 'Спасибо за заказ! Ваш заказ принят в обработку.',
+    cash_on_delivery: 'Оплата при получении',
+    credit_card: 'Кредитная карта',
+    paypal: 'PayPal',
+    place_order: 'ОФОРМИТЬ ЗАКАЗ',
+    order_paid_success: 'Заказ успешно оплачен',
+    order_placed_success: 'Заказ успешно размещен',
+    deliveryForm: {
+        name: 'Имя',
+        phone: 'Телефон',
+        address: 'Адрес',
+        city: 'Город',
+        zip: 'Индекс',
+        notes: 'Примечания'
+    },
     // Авторизация
     auth: {
         login: 'Войти',
@@ -157,6 +178,19 @@ export default {
         back: 'Назад',
         next: 'Далее',
         previous: 'Предыдущий',
+        city: 'Город',
+        zip: 'Индекс',
+        notes: 'Примечания',
+    },
+    orders: {
+        empty: 'Заказы отсутствуют',
+        id: '№',
+        date: 'Дата',
+        status: 'Статус',
+        payment: 'Оплата',
+        items: 'Продукты',
+        total: 'Сумма',
+        currency: 'Валюта'
     },
 };
 // Этот файл содержит переводы для интерфейса на русском языке

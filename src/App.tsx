@@ -9,6 +9,7 @@ const ProductsPage = lazy(() => import("./pages/ProductsPage"));
 const TestProductsPage = lazy(() => import("./pages/TestProductsPage"));
 const FarmPage = lazy(() => import("./pages/FarmPage"));
 const DesignSystemPage = lazy(() => import("./pages/DesignSystemPage"));
+const OrderHistoryPage = lazy(() => import("./pages/OrderHistoryPage"));
 const ApiDemo = lazy(() => import("./widgets/api-demo/ui/ApiDemo").then(module => ({ default: module.ApiDemo })));
 const AuthCallbackPage = lazy(() => import("./pages/AuthCallbackPage").then(module => ({ default: module.AuthCallbackPage })));
 import { Layout } from "./app/layout/Layout";
@@ -32,6 +33,7 @@ function App() {
                     <Route path="/test-products" element={<TestProductsPage />} />
                     <Route path="/farm/:id" element={<FarmPage />} />
                     <Route path="/design-system" element={<DesignSystemPage />} />
+                    <Route path="/orders" element={<OrderHistoryPage />} />
                     <Route path="/axios-demo" element={<ApiDemo />} />
                     <Route path="/auth-callback" element={<AuthCallbackPage />} />
                 </Routes>

@@ -32,22 +32,7 @@ export const HomePage = () => {
 
             {/* 🌿 Преимущества */}
             <Container maxWidth={false} sx={{ py: { xs: 'var(--space-16)', sm: 'var(--space-24)', md: 'var(--space-32)' }, width: '100%' }}>
-                <Typography
-                    variant="h3"
-                    textAlign="center"
-                    sx={{
-                        mb: { xs: 'var(--space-16)', sm: 'var(--space-24)', md: 'var(--space-32)' },
-                        fontWeight: 'var(--font-weight-bold)',
-                        fontSize: { xs: 'var(--font-size-2xl)', sm: 'var(--font-size-3xl)', md: 'var(--font-size-4xl)' },
-                        background: 'var(--gradient-primary)',
-                        backgroundClip: 'text',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        lineHeight: 'var(--line-height-tight)',
-                    }}
-                >
-                    {t('home.whyUs')}
-                </Typography>
+                <Typography variant={"sectionTitle" as any}>{t('home.whyUs')}</Typography>
 
                 <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
                     {/* 🥦 Блок "Свежие продукты" */}

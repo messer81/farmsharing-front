@@ -57,7 +57,7 @@ export const HeroSection = () => {
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    backgroundColor: 'rgba(31, 33, 33, 0.3)', // Более прозрачная накладка
+                    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(31,33,33,0.45)' : 'rgba(0,0,0,0.25)',
                     zIndex: 1,
                 }}
             />
@@ -72,7 +72,7 @@ export const HeroSection = () => {
             >
                 <Box
                     sx={{
-                        maxWidth: { xs: '100%', sm: '80%', md: '60%', lg: '50%' },
+                        maxWidth: { xs: '100%', sm: '80%', md: '70%', lg: '70%' },
                         color: 'var(--color-hero-text)',
                         position: 'relative',
                         zIndex: 2,
@@ -82,29 +82,12 @@ export const HeroSection = () => {
                     className="animate__animated animate__fadeIn"
                 >
                     {/* 🎯 Главный заголовок */}
-                    <Typography
-                        variant="h1"
-                        sx={{
-                            mb: { xs: 'var(--space-8)', sm: 'var(--space-12)' },
-                            textShadow: '2px 2px 4px rgba(0,0,0,0.6)', // Менее сильная тень
-                        }}
-                    >
-                        <span style={{ color: 'white' }}>
-                            {t('main.title')}
-                        </span>
+                    <Typography variant={"heroTitle" as any}>
+                        {t('main.title')}
                     </Typography>
 
                     {/* 📝 Подзаголовок */}
-                    <Typography
-                        variant="h5"
-                        sx={{
-                            mb: { xs: 'var(--space-16)', sm: 'var(--space-20)', md: 'var(--space-24)' },
-                            maxWidth: { xs: '100%', sm: '500px', md: '600px' },
-                            textShadow: '1px 1px 2px rgba(0,0,0,0.6)', // Менее сильная тень
-                            color: 'white',
-                            mx: 'auto',
-                        }}
-                    >
+                    <Typography variant={"heroSubtitle" as any}>
                         {t('main.subtitle')}
                     </Typography>
 

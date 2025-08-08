@@ -10,10 +10,12 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
+const Stripe = require('stripe');
 
 // 📊 Подключаем JSON "базу данных"
 const userDB = require('./data/userDatabase.cjs');
 const farmDB = require('./data/farmDatabase.cjs');
+const orderDB = require('./data/orderDatabase.cjs');
 
 // Mock данные прямо в сервере для простоты
 const mockProducts = [
@@ -180,6 +182,7 @@ console.log('Callback URL:', GOOGLE_CONFIG.callbackURL);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2024-06-20' });
 
 // 🔐 Passport конфигурация
 passport.use(new GoogleStrategy(
@@ -634,6 +637,98 @@ app.delete('/api/cart', (req, res) => {
     total: 0,
     totalPrice: 0
   });
+});
+
+// 💳 Payments API (Stripe)
+app.post('/api/payments/create-intent', async (req, res) => {
+  try {
+    const { amount, currency = 'ils' } = req.body;
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ message: 'Invalid amount' });
+    }
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return res.status(500).json({ message: 'Stripe not configured' });
+    }
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100),
+      currency,
+      automatic_payment_methods: { enabled: true },
+    });
+
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    console.error('❌ Stripe create-intent error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// 🧾 Orders API endpoints
+app.post('/api/orders', (req, res) => {
+  try {
+    const { userId, items, deliveryAddress, paymentMethod, paymentId = null, totalAmount, currency } = req.body;
+
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: 'Items are required' });
+    }
+    if (!deliveryAddress || !deliveryAddress.address || !deliveryAddress.city || !deliveryAddress.name || !deliveryAddress.phone) {
+      return res.status(400).json({ message: 'Delivery address is invalid' });
+    }
+    if (!totalAmount || totalAmount <= 0) {
+      return res.status(400).json({ message: 'Invalid total amount' });
+    }
+    if (!currency) {
+      return res.status(400).json({ message: 'Currency is required' });
+    }
+
+    // Собираем снимок товаров из mockProducts
+    const orderItems = items.map(({ productId, quantity }) => {
+      const product = mockProducts.find((p) => p.id === parseInt(productId));
+      if (!product) {
+        throw new Error(`Product not found: ${productId}`);
+      }
+      return {
+        product,
+        quantity,
+        price: product.price,
+      };
+    });
+
+    const orderData = {
+      userId: userId || 0,
+      items: orderItems,
+      totalAmount,
+      currency,
+      status: 'pending',
+      deliveryAddress,
+      paymentMethod,
+      paymentId,
+    };
+
+    const order = orderDB.addOrder(orderData);
+    if (!order) {
+      return res.status(500).json({ message: 'Failed to create order' });
+    }
+
+    res.status(201).json({ data: order, success: true, message: 'Order created' });
+  } catch (error) {
+    console.error('❌ Create order error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.get('/api/orders', (req, res) => {
+  try {
+    const { userId } = req.query;
+    if (!userId) {
+      return res.status(400).json({ message: 'userId is required' });
+    }
+    const orders = orderDB.getOrdersByUser(userId);
+    res.json({ data: orders, success: true, total: orders.length });
+  } catch (error) {
+    console.error('❌ Get orders error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
 // 📊 Статистика пользователей

@@ -116,6 +116,27 @@ export default {
         close: 'Close',
         proceed_to_checkout: 'PROCEED TO CHECKOUT',
     },
+    // Checkout
+    checkout: 'Checkout',
+    delivery_address: 'Delivery address',
+    payment_method: 'Payment method',
+    order_summary: 'Order summary',
+    order_confirmed: 'Order confirmed',
+    order_confirmed_message: 'Thank you! Your order has been received.',
+    cash_on_delivery: 'Cash on delivery',
+    credit_card: 'Credit card',
+    paypal: 'PayPal',
+    place_order: 'PLACE ORDER',
+    order_paid_success: 'Order successfully paid',
+    order_placed_success: 'Order successfully placed',
+    deliveryForm: {
+        name: 'Name',
+        phone: 'Phone',
+        address: 'Address',
+        city: 'City',
+        zip: 'ZIP code',
+        notes: 'Notes'
+    },
     // Authentication
     auth: {
         login: 'Login',
@@ -158,5 +179,15 @@ export default {
         back: 'Back',
         next: 'Next',
         previous: 'Previous',
+    },
+    orders: {
+        empty: 'No orders yet',
+        id: '#',
+        date: 'Date',
+        status: 'Status',
+        payment: 'Payment',
+        items: 'Items',
+        total: 'Total',
+        currency: 'Currency'
     },
 };

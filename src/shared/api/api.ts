@@ -1,5 +1,6 @@
 // 🌐 API слой с Axios для работы с Express сервером
 import type { Product, ApiResponse, PaginatedResponse } from '../../types/api';
+import type { Order, CreateOrderRequest } from '../../entities/order/model/types';
 import axiosInstance, { apiUtils } from './axios';
 
 // 🔧 Конфигурация API
@@ -147,6 +148,34 @@ export const cartApi = {
   },
 };
 
+// 🧾 API для заказов
+export const ordersApi = {
+  // Создать заказ
+  create: async (orderData: CreateOrderRequest): Promise<ApiResponse<Order>> => {
+    return apiRequest<ApiResponse<Order>>('/api/orders', {
+      method: 'POST',
+      data: orderData,
+    });
+  },
+
+  // Получить заказы пользователя
+  getByUser: async (userId: number): Promise<ApiResponse<Order[]>> => {
+    return apiRequest<ApiResponse<Order[]>>('/api/orders', {
+      params: { userId },
+    });
+  },
+};
+
+// 💳 Платежи (Stripe)
+export const paymentsApi = {
+  createPaymentIntent: async (amount: number, currency: string = 'ils'): Promise<{ clientSecret: string }> => {
+    return apiRequest<{ clientSecret: string }>('/api/payments/create-intent', {
+      method: 'POST',
+      data: { amount, currency },
+    });
+  },
+};
+
 
 
 // 🎯 Универсальный API клиент
@@ -154,6 +183,8 @@ export const apiClient = {
   products: productsApi, // Всегда используем Axios API
   farms: farmsApi,
   cart: cartApi,
+  orders: ordersApi,
+  payments: paymentsApi,
 };
 
 // 🔧 Экспорт утилит и экземпляра Axios

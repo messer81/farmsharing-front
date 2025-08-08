@@ -103,32 +103,8 @@ export const FarmProfiles = ({
     <Container maxWidth={false} sx={{ py: { xs: 'var(--space-16)', sm: 'var(--space-24)', md: 'var(--space-32)' }, width: '100%' }}>
       {/* 🎯 Заголовок секции */}
       <Box sx={{ textAlign: 'center', mb: { xs: 'var(--space-16)', sm: 'var(--space-24)', md: 'var(--space-32)' } }}>
-        <Typography
-          variant="h3"
-          sx={{
-            mb: { xs: 'var(--space-8)', sm: 'var(--space-12)' },
-            fontWeight: 'var(--font-weight-bold)',
-            fontSize: { xs: 'var(--font-size-2xl)', sm: 'var(--font-size-3xl)', md: 'var(--font-size-4xl)' },
-            background: 'var(--gradient-primary)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            lineHeight: 'var(--line-height-tight)',
-          }}
-        >
-          {title || t('farms.title')}
-        </Typography>
-        <Typography
-          sx={{
-            color: 'var(--color-text-secondary)',
-            fontSize: { xs: 'var(--font-size-base)', sm: 'var(--font-size-lg)' },
-            lineHeight: 'var(--line-height-normal)',
-            maxWidth: { xs: '100%', sm: '600px', md: '700px' },
-            mx: 'auto',
-          }}
-        >
-          {subtitle || t('farms.subtitle')}
-        </Typography>
+        <Typography variant={"sectionTitle" as any}>{title || t('farms.title')}</Typography>
+        <Typography variant={"sectionSubtitle" as any}>{subtitle || t('farms.subtitle')}</Typography>
       </Box>
 
       {/* 👨‍🌾 Карточки фермеров */}

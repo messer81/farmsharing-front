@@ -1,0 +1,725 @@
+[
+  {
+    "id": 1,
+    "status": "pending",
+    "createdAt": "2025-08-08T16:45:08.229Z",
+    "updatedAt": "2025-08-08T16:45:08.229Z",
+    "userId": 0,
+    "items": [
+      {
+        "product": {
+          "id": 3,
+          "title": {
+            "en": "Sweet Oranges",
+            "ru": "Сладкие апельсины",
+            "ar": "برتقال حلو",
+            "he": "תפוזים מתוקים"
+          },
+          "description": {
+            "en": "Fresh oranges from a citrus grove",
+            "ru": "Свежие апельсины с цитрусовой рощи",
+            "ar": "برتقال طازج من بستان الحمضيات",
+            "he": "תפוזים טריים מגן הדרים"
+          },
+          "farmName": {
+            "en": "Citrus Grove",
+            "ru": "Цитрусовая роща",
+            "ar": "بستان الحمضيات",
+            "he": "גן הדרים"
+          },
+          "unit": {
+            "en": "kg",
+            "ru": "кг",
+            "ar": "كجم",
+            "he": "ק\"ג"
+          },
+          "price": 12.5,
+          "originalPrice": 14.99,
+          "imageUrl": "/src/assets/orange.jpg",
+          "category": "fruits",
+          "rating": 4.9,
+          "isOrganic": true,
+          "stock": 30,
+          "tags": [
+            "organic",
+            "herbs",
+            "fresh"
+          ],
+          "createdAt": "2024-01-17T09:00:00Z",
+          "updatedAt": "2024-01-20T12:15:00Z"
+        },
+        "quantity": 2,
+        "price": 12.5
+      }
+    ],
+    "totalAmount": 25,
+    "currency": "ILS",
+    "deliveryAddress": {
+      "name": "Aleksei Fedorov",
+      "phone": "0534381317",
+      "address": "Shoham 46",
+      "city": "Migdal HaEmek",
+      "zipCode": "2353224",
+      "notes": "Test note"
+    },
+    "paymentMethod": "cash",
+    "paymentId": null
+  },
+  {
+    "id": 2,
+    "status": "pending",
+    "createdAt": "2025-08-08T16:57:25.159Z",
+    "updatedAt": "2025-08-08T16:57:25.159Z",
+    "userId": 7,
+    "items": [
+      {
+        "product": {
+          "id": 3,
+          "title": {
+            "en": "Sweet Oranges",
+            "ru": "Сладкие апельсины",
+            "ar": "برتقال حلو",
+            "he": "תפוזים מתוקים"
+          },
+          "description": {
+            "en": "Fresh oranges from a citrus grove",
+            "ru": "Свежие апельсины с цитрусовой рощи",
+            "ar": "برتقال طازج من بستان الحمضيات",
+            "he": "תפוזים טריים מגן הדרים"
+          },
+          "farmName": {
+            "en": "Citrus Grove",
+            "ru": "Цитрусовая роща",
+            "ar": "بستان الحمضيات",
+            "he": "גן הדרים"
+          },
+          "unit": {
+            "en": "kg",
+            "ru": "кг",
+            "ar": "كجم",
+            "he": "ק\"ג"
+          },
+          "price": 12.5,
+          "originalPrice": 14.99,
+          "imageUrl": "/src/assets/orange.jpg",
+          "category": "fruits",
+          "rating": 4.9,
+          "isOrganic": true,
+          "stock": 30,
+          "tags": [
+            "organic",
+            "herbs",
+            "fresh"
+          ],
+          "createdAt": "2024-01-17T09:00:00Z",
+          "updatedAt": "2024-01-20T12:15:00Z"
+        },
+        "quantity": 1,
+        "price": 12.5
+      },
+      {
+        "product": {
+          "id": 2,
+          "title": {
+            "en": "Halloumi Cheese",
+            "ru": "Сыр халуми",
+            "ar": "جبنة حلومي",
+            "he": "גבינת חלומי"
+          },
+          "description": {
+            "en": "Traditional Cypriot cheese",
+            "ru": "Традиционный кипрский сыр",
+            "ar": "جبنة قبرصية تقليدية",
+            "he": "גבינה קפריסאית מסורתית"
+          },
+          "farmName": {
+            "en": "Galil Cheese",
+            "ru": "Галиль Сыр",
+            "ar": "جبنة الجليل",
+            "he": "גבינת הגליל"
+          },
+          "unit": {
+            "en": "kg",
+            "ru": "кг",
+            "ar": "كجم",
+            "he": "ק\"ג"
+          },
+          "price": 35,
+          "imageUrl": "/src/assets/chease.jpg",
+          "category": "dairy",
+          "rating": 4.6,
+          "isOrganic": false,
+          "stock": 75,
+          "tags": [
+            "fresh",
+            "local"
+          ],
+          "createdAt": "2024-01-16T08:00:00Z",
+          "updatedAt": "2024-01-19T16:45:00Z"
+        },
+        "quantity": 1,
+        "price": 35
+      }
+    ],
+    "totalAmount": 47.5,
+    "currency": "ILS",
+    "deliveryAddress": {
+      "name": "Aleksei Fedorov",
+      "phone": "0534381317",
+      "address": "Shoham 46",
+      "city": "Migdal HaEmek",
+      "zipCode": "2353224",
+      "notes": "Test note 2"
+    },
+    "paymentMethod": "cash",
+    "paymentId": null
+  },
+  {
+    "id": 3,
+    "status": "pending",
+    "createdAt": "2025-08-08T16:58:09.299Z",
+    "updatedAt": "2025-08-08T16:58:09.299Z",
+    "userId": 7,
+    "items": [
+      {
+        "product": {
+          "id": 1,
+          "title": {
+            "en": "Fresh Tomatoes",
+            "ru": "Свежие помидоры",
+            "ar": "طماطم طازجة",
+            "he": "עגבניות טריות"
+          },
+          "description": {
+            "en": "Fresh organic tomatoes from the farm",
+            "ru": "Свежие органические помидоры с фермы",
+            "ar": "طماطم عضوية طازجة من المزرعة",
+            "he": "עגבניות אורגניות טריות מהחווה"
+          },
+          "farmName": {
+            "en": "Galil Farm",
+            "ru": "Ферма Галиль",
+            "ar": "مزرعة الجليل",
+            "he": "חוות הגליל"
+          },
+          "unit": {
+            "en": "kg",
+            "ru": "кг",
+            "ar": "كجم",
+            "he": "ק\"ג"
+          },
+          "price": 15.99,
+          "originalPrice": 18.99,
+          "imageUrl": "/src/assets/tomat.jpg",
+          "category": "vegetables",
+          "rating": 4.8,
+          "isOrganic": true,
+          "stock": 50,
+          "tags": [
+            "organic",
+            "fresh",
+            "local"
+          ],
+          "createdAt": "2024-01-15T10:00:00Z",
+          "updatedAt": "2024-01-20T14:30:00Z"
+        },
+        "quantity": 3,
+        "price": 15.99
+      }
+    ],
+    "totalAmount": 47.97,
+    "currency": "ILS",
+    "deliveryAddress": {
+      "name": "Aleksei Fedorov",
+      "phone": "0534381317",
+      "address": "Shoham 46",
+      "city": "Migdal HaEmek",
+      "zipCode": "2353224",
+      "notes": "Test note 3"
+    },
+    "paymentMethod": "cash",
+    "paymentId": null
+  },
+  {
+    "id": 4,
+    "status": "pending",
+    "createdAt": "2025-08-08T17:36:58.547Z",
+    "updatedAt": "2025-08-08T17:36:58.547Z",
+    "userId": 5,
+    "items": [
+      {
+        "product": {
+          "id": 3,
+          "title": {
+            "en": "Sweet Oranges",
+            "ru": "Сладкие апельсины",
+            "ar": "برتقال حلو",
+            "he": "תפוזים מתוקים"
+          },
+          "description": {
+            "en": "Fresh oranges from a citrus grove",
+            "ru": "Свежие апельсины с цитрусовой рощи",
+            "ar": "برتقال طازج من بستان الحمضيات",
+            "he": "תפוזים טריים מגן הדרים"
+          },
+          "farmName": {
+            "en": "Citrus Grove",
+            "ru": "Цитрусовая роща",
+            "ar": "بستان الحمضيات",
+            "he": "גן הדרים"
+          },
+          "unit": {
+            "en": "kg",
+            "ru": "кг",
+            "ar": "كجم",
+            "he": "ק\"ג"
+          },
+          "price": 12.5,
+          "originalPrice": 14.99,
+          "imageUrl": "/src/assets/orange.jpg",
+          "category": "fruits",
+          "rating": 4.9,
+          "isOrganic": true,
+          "stock": 30,
+          "tags": [
+            "organic",
+            "herbs",
+            "fresh"
+          ],
+          "createdAt": "2024-01-17T09:00:00Z",
+          "updatedAt": "2024-01-20T12:15:00Z"
+        },
+        "quantity": 1,
+        "price": 12.5
+      },
+      {
+        "product": {
+          "id": 2,
+          "title": {
+            "en": "Halloumi Cheese",
+            "ru": "Сыр халуми",
+            "ar": "جبنة حلومي",
+            "he": "גבינת חלומי"
+          },
+          "description": {
+            "en": "Traditional Cypriot cheese",
+            "ru": "Традиционный кипрский сыр",
+            "ar": "جبنة قبرصية تقليدية",
+            "he": "גבינה קפריסאית מסורתית"
+          },
+          "farmName": {
+            "en": "Galil Cheese",
+            "ru": "Галиль Сыр",
+            "ar": "جبنة الجليل",
+            "he": "גבינת הגליל"
+          },
+          "unit": {
+            "en": "kg",
+            "ru": "кг",
+            "ar": "كجم",
+            "he": "ק\"ג"
+          },
+          "price": 35,
+          "imageUrl": "/src/assets/chease.jpg",
+          "category": "dairy",
+          "rating": 4.6,
+          "isOrganic": false,
+          "stock": 75,
+          "tags": [
+            "fresh",
+            "local"
+          ],
+          "createdAt": "2024-01-16T08:00:00Z",
+          "updatedAt": "2024-01-19T16:45:00Z"
+        },
+        "quantity": 1,
+        "price": 35
+      }
+    ],
+    "totalAmount": 47.5,
+    "currency": "ILS",
+    "deliveryAddress": {
+      "name": "Aleksei Fedorov",
+      "phone": "0534381317",
+      "address": "Shoham 46",
+      "city": "Migdal HaEmek",
+      "zipCode": "2353224",
+      "notes": "Test note 4"
+    },
+    "paymentMethod": "card",
+    "paymentId": null
+  },
+  {
+    "id": 5,
+    "status": "pending",
+    "createdAt": "2025-08-08T17:52:49.795Z",
+    "updatedAt": "2025-08-08T17:52:49.795Z",
+    "userId": 7,
+    "items": [
+      {
+        "product": {
+          "id": 5,
+          "title": {
+            "en": "Homemade Yogurt",
+            "ru": "Домашний йогурт",
+            "ar": "زبادي منزلي",
+            "he": "יוגורט ביתי"
+          },
+          "description": {
+            "en": "Natural homemade yogurt",
+            "ru": "Натуральный домашний йогурт",
+            "ar": "زبادي طبيعي منزلي",
+            "he": "יוגורט טבעי ביתי"
+          },
+          "farmName": {
+            "en": "Dairy Farm",
+            "ru": "Молочная ферма",
+            "ar": "مزرعة الألبان",
+            "he": "חוות החלב"
+          },
+          "unit": {
+            "en": "liter",
+            "ru": "литр",
+            "ar": "لتر",
+            "he": "ליטר"
+          },
+          "price": 18.5,
+          "originalPrice": 21.76,
+          "imageUrl": "/src/assets/yogurt.jpg",
+          "category": "dairy",
+          "rating": 4.5,
+          "isOrganic": true,
+          "stock": 25,
+          "tags": [
+            "fresh",
+            "local"
+          ],
+          "createdAt": "2024-01-19T10:00:00Z",
+          "updatedAt": "2024-01-20T15:20:00Z"
+        },
+        "quantity": 1,
+        "price": 18.5
+      }
+    ],
+    "totalAmount": 18.5,
+    "currency": "ILS",
+    "deliveryAddress": {
+      "name": "Aleksei Fedorov",
+      "phone": "0534381317",
+      "address": "Shoham 46",
+      "city": "Migdal HaEmek",
+      "zipCode": "2353224",
+      "notes": ""
+    },
+    "paymentMethod": "cash",
+    "paymentId": null
+  },
+  {
+    "id": 6,
+    "status": "pending",
+    "createdAt": "2025-08-08T17:53:18.901Z",
+    "updatedAt": "2025-08-08T17:53:18.901Z",
+    "userId": 7,
+    "items": [
+      {
+        "product": {
+          "id": 10,
+          "title": {
+            "en": "Mint",
+            "ru": "Мята",
+            "ar": "نعناع",
+            "he": "נענע"
+          },
+          "description": {
+            "en": "Fresh mint for tea",
+            "ru": "Свежая мята для чая",
+            "ar": "نعناع طازج للشاي",
+            "he": "נענע טרייה לתה"
+          },
+          "farmName": {
+            "en": "Herb Farm",
+            "ru": "Травяная ферма",
+            "ar": "مزرعة الأعشاب",
+            "he": "חוות התבלינים"
+          },
+          "unit": {
+            "en": "bunch",
+            "ru": "пучок",
+            "ar": "حزمة",
+            "he": "צרור"
+          },
+          "price": 6.5,
+          "originalPrice": 7.65,
+          "imageUrl": "/src/assets/mint.jpg",
+          "category": "herbs",
+          "rating": 4.8,
+          "isOrganic": true,
+          "stock": 10,
+          "tags": [
+            "organic",
+            "beautiful",
+            "fresh"
+          ],
+          "createdAt": "2024-01-19T07:00:00Z",
+          "updatedAt": "2024-01-20T16:00:00Z"
+        },
+        "quantity": 1,
+        "price": 6.5
+      }
+    ],
+    "totalAmount": 6.5,
+    "currency": "ILS",
+    "deliveryAddress": {
+      "name": "Aleksei Fedorov",
+      "phone": "0534381317",
+      "address": "Shoham 46",
+      "city": "Migdal HaEmek",
+      "zipCode": "2353224",
+      "notes": ""
+    },
+    "paymentMethod": "card",
+    "paymentId": null
+  },
+  {
+    "id": 7,
+    "status": "pending",
+    "createdAt": "2025-08-08T17:56:34.980Z",
+    "updatedAt": "2025-08-08T17:56:34.980Z",
+    "userId": 7,
+    "items": [
+      {
+        "product": {
+          "id": 3,
+          "title": {
+            "en": "Sweet Oranges",
+            "ru": "Сладкие апельсины",
+            "ar": "برتقال حلو",
+            "he": "תפוזים מתוקים"
+          },
+          "description": {
+            "en": "Fresh oranges from a citrus grove",
+            "ru": "Свежие апельсины с цитрусовой рощи",
+            "ar": "برتقال طازج من بستان الحمضيات",
+            "he": "תפוזים טריים מגן הדרים"
+          },
+          "farmName": {
+            "en": "Citrus Grove",
+            "ru": "Цитрусовая роща",
+            "ar": "بستان الحمضيات",
+            "he": "גן הדרים"
+          },
+          "unit": {
+            "en": "kg",
+            "ru": "кг",
+            "ar": "كجم",
+            "he": "ק\"ג"
+          },
+          "price": 12.5,
+          "originalPrice": 14.99,
+          "imageUrl": "/src/assets/orange.jpg",
+          "category": "fruits",
+          "rating": 4.9,
+          "isOrganic": true,
+          "stock": 30,
+          "tags": [
+            "organic",
+            "herbs",
+            "fresh"
+          ],
+          "createdAt": "2024-01-17T09:00:00Z",
+          "updatedAt": "2024-01-20T12:15:00Z"
+        },
+        "quantity": 1,
+        "price": 12.5
+      }
+    ],
+    "totalAmount": 12.5,
+    "currency": "ILS",
+    "deliveryAddress": {
+      "name": "Aleksei Fedorov",
+      "phone": "0534381317",
+      "address": "Shoham 46",
+      "city": "Migdal HaEmek",
+      "zipCode": "2353224",
+      "notes": ""
+    },
+    "paymentMethod": "cash",
+    "paymentId": null
+  },
+  {
+    "id": 8,
+    "status": "pending",
+    "createdAt": "2025-08-08T17:58:28.440Z",
+    "updatedAt": "2025-08-08T17:58:28.440Z",
+    "userId": 7,
+    "items": [
+      {
+        "product": {
+          "id": 4,
+          "title": {
+            "en": "Fresh Basil",
+            "ru": "Свежий базилик",
+            "ar": "ريحان طازج",
+            "he": "בזיליקום טרי"
+          },
+          "description": {
+            "en": "Aromatic basil for Italian dishes",
+            "ru": "Ароматный базилик для итальянских блюд",
+            "ar": "ريحان عطري للأطباق الإيطالية",
+            "he": "בזיליקום ארומטי למנות איטלקיות"
+          },
+          "farmName": {
+            "en": "Herb Farm",
+            "ru": "Травяная ферма",
+            "ar": "مزرعة الأعشاب",
+            "he": "חוות התבלינים"
+          },
+          "unit": {
+            "en": "bunch",
+            "ru": "пучок",
+            "ar": "حزمة",
+            "he": "צרור"
+          },
+          "price": 8.99,
+          "originalPrice": 10.59,
+          "imageUrl": "/src/assets/basil.jpg",
+          "category": "herbs",
+          "rating": 4.7,
+          "isOrganic": true,
+          "stock": 40,
+          "tags": [
+            "organic",
+            "herbs",
+            "fresh"
+          ],
+          "createdAt": "2024-01-18T07:00:00Z",
+          "updatedAt": "2024-01-20T11:30:00Z"
+        },
+        "quantity": 2,
+        "price": 8.99
+      }
+    ],
+    "totalAmount": 17.98,
+    "currency": "ILS",
+    "deliveryAddress": {
+      "name": "Aleksei Fedorov",
+      "phone": "0534381317",
+      "address": "Shoham 46",
+      "city": "Migdal HaEmek",
+      "zipCode": "2353224",
+      "notes": ""
+    },
+    "paymentMethod": "cash",
+    "paymentId": null
+  },
+  {
+    "id": 9,
+    "status": "pending",
+    "createdAt": "2025-08-08T17:59:00.099Z",
+    "updatedAt": "2025-08-08T17:59:00.099Z",
+    "userId": 7,
+    "items": [
+      {
+        "product": {
+          "id": 1,
+          "title": {
+            "en": "Fresh Tomatoes",
+            "ru": "Свежие помидоры",
+            "ar": "طماطم طازجة",
+            "he": "עגבניות טריות"
+          },
+          "description": {
+            "en": "Fresh organic tomatoes from the farm",
+            "ru": "Свежие органические помидоры с фермы",
+            "ar": "طماطم عضوية طازجة من المزرعة",
+            "he": "עגבניות אורגניות טריות מהחווה"
+          },
+          "farmName": {
+            "en": "Galil Farm",
+            "ru": "Ферма Галиль",
+            "ar": "مزرعة الجليل",
+            "he": "חוות הגליל"
+          },
+          "unit": {
+            "en": "kg",
+            "ru": "кг",
+            "ar": "كجم",
+            "he": "ק\"ג"
+          },
+          "price": 15.99,
+          "originalPrice": 18.99,
+          "imageUrl": "/src/assets/tomat.jpg",
+          "category": "vegetables",
+          "rating": 4.8,
+          "isOrganic": true,
+          "stock": 50,
+          "tags": [
+            "organic",
+            "fresh",
+            "local"
+          ],
+          "createdAt": "2024-01-15T10:00:00Z",
+          "updatedAt": "2024-01-20T14:30:00Z"
+        },
+        "quantity": 1,
+        "price": 15.99
+      },
+      {
+        "product": {
+          "id": 5,
+          "title": {
+            "en": "Homemade Yogurt",
+            "ru": "Домашний йогурт",
+            "ar": "زبادي منزلي",
+            "he": "יוגורט ביתי"
+          },
+          "description": {
+            "en": "Natural homemade yogurt",
+            "ru": "Натуральный домашний йогурт",
+            "ar": "زبادي طبيعي منزلي",
+            "he": "יוגורט טבעי ביתי"
+          },
+          "farmName": {
+            "en": "Dairy Farm",
+            "ru": "Молочная ферма",
+            "ar": "مزرعة الألبان",
+            "he": "חוות החלב"
+          },
+          "unit": {
+            "en": "liter",
+            "ru": "литр",
+            "ar": "لتر",
+            "he": "ליטר"
+          },
+          "price": 18.5,
+          "originalPrice": 21.76,
+          "imageUrl": "/src/assets/yogurt.jpg",
+          "category": "dairy",
+          "rating": 4.5,
+          "isOrganic": true,
+          "stock": 25,
+          "tags": [
+            "fresh",
+            "local"
+          ],
+          "createdAt": "2024-01-19T10:00:00Z",
+          "updatedAt": "2024-01-20T15:20:00Z"
+        },
+        "quantity": 1,
+        "price": 18.5
+      }
+    ],
+    "totalAmount": 34.49,
+    "currency": "ILS",
+    "deliveryAddress": {
+      "name": "Aleksei Fedorov",
+      "phone": "0534381317",
+      "address": "Shoham 46",
+      "city": "Migdal HaEmek",
+      "zipCode": "2353224",
+      "notes": ""
+    },
+    "paymentMethod": "card",
+    "paymentId": null
+  }
+]
